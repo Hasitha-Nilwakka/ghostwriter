@@ -8,12 +8,12 @@
 @theme {
   --color-bg: #F8FAFF;
   --color-surface: #FFFFFF;
-  --color-primary: #2453D4;
+  --color-primary-col: #2453D4;
   --color-primary-hover: #1D46B8;
   --color-primary-soft: #EEF3FF;
-  --color-accent: #FF6B2C;
+  --color-accent-color: #fb8500;
   --color-accent-hover: #E9571E;
-  --color-secondary: #F4C84A;
+  --color-secondary-color: #F4C84A;
   --color-text-primary: #10213A;
   --color-text-secondary: #526277;
   --color-border: #DDE5F0;

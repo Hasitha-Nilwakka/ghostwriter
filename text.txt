@@ -1,0 +1,144 @@
+The UI should mirror the exact Run02 training schema. This gives users useful controls without sending unfamiliar fields to the model.
+
+## 1. Email Generator
+
+| Field | UI control | Required | Suggested options/rules |
+|---|---|---:|---|
+| Purpose | Multiline text | Yes | Describe what the email should accomplish |
+| Recipient context | Multiline text | Yes | Who receives it and relevant background |
+| Key points | Repeatable text inputs | Yes | 1–8 points; “Add key point” button |
+| Tone | Dropdown | Yes | Professional, Friendly, Warm, Formal, Conversational, Concise, Diplomatic, Reassuring, Appreciative, Enthusiastic, Apologetic, Persuasive, Empathetic, Confident, Direct but respectful |
+| Urgency | Segmented control | Yes | Low, Normal, High |
+| Call to action | Text input | Yes | The single action the recipient should take |
+
+Output:
+
+- Subject
+- Email body
+
+Example request:
+
+```json
+{
+  "content_type": "email",
+  "parameters": {
+    "purpose": "Request approval for the new campaign",
+    "recipient_context": "Marketing manager responsible for approving external communications",
+    "key_points": [
+      "The campaign launches on September 1",
+      "The final draft is ready",
+      "Approval is needed by Friday"
+    ],
+    "tone": "professional",
+    "urgency": "high",
+    "cta": "Approve the campaign draft by Friday"
+  }
+}
+```
+
+## 2. Story Generator
+
+| Field | UI control | Required | Suggested options/rules |
+|---|---|---:|---|
+| Genre | Dropdown | Yes | Fantasy, Science Fiction, Mystery, Adventure, Historical Fiction, Magical Realism, Contemporary Fiction, Cozy Mystery, Gothic Fiction, Suspense, Slice of Life, Romance, Comedy, Folklore-inspired Fiction |
+| Characters | Repeatable character cards | Yes | 1–4 characters |
+| Character name | Text input | Yes | Nested inside each character card |
+| Character role | Text input | Yes | E.g. detective, apprentice, pilot |
+| Character description | Multiline text | Yes | Personality, motivation, relevant traits |
+| Setting | Multiline text | Yes | Place, time period and important environment details |
+| Length | Slider or dropdown | Yes | 300–1,000 words |
+| Style | Dropdown | Yes | Atmospheric, Lyrical, Cinematic, Dialogue-driven, Character-focused, Descriptive, Intimate, Fast-paced, Fable-like, Minimalist, Humorous |
+| Target audience | Dropdown | Yes | Children 8–12, Young Adult, Adult, General |
+| Mood | Dropdown | Yes | Tense, Bittersweet, Mysterious, Hopeful, Melancholic, Adventurous, Eerie, Comforting, Whimsical, Suspenseful, Humorous, Joyful, Reflective, Romantic |
+
+Output:
+
+- Story title
+- Complete story
+
+The length control should use steps of 50 words. The model is trained to remain within approximately ±10% of the requested length.
+
+Example request:
+
+```json
+{
+  "content_type": "story",
+  "parameters": {
+    "genre": "mystery",
+    "characters": [
+      {
+        "name": "Mara",
+        "role": "village librarian",
+        "description": "Observant, patient and determined to protect the library"
+      },
+      {
+        "name": "Elias",
+        "role": "retired clockmaker",
+        "description": "Secretive but kind, with detailed knowledge of the town"
+      }
+    ],
+    "setting": "A snow-covered mountain village during its winter festival",
+    "length_words": 600,
+    "style": "atmospheric",
+    "target_audience": "young_adult",
+    "mood": "mysterious"
+  }
+}
+```
+
+## 3. Social Media Generator
+
+| Field | UI control | Required | Suggested options/rules |
+|---|---|---:|---|
+| Product or service | Multiline text | Yes | Include only accurate features, prices and offer details |
+| Platform | Visual selection cards | Yes | X, LinkedIn, Instagram, Facebook |
+| Goal | Dropdown with custom option | Yes | Brand awareness, Engagement, Sales, Lead generation, Product education, Event registrations, App downloads, Bookings, Waitlist sign-ups, Demo requests, Website traffic |
+| Tone | Dropdown with custom option | Yes | Professional, Friendly, Conversational, Energetic, Playful, Confident, Informative, Warm, Practical, Bold, Motivational, Appreciative, Witty |
+| Call to action | Text input | Yes | E.g. “Join the waitlist” or “Book a consultation” |
+
+Output:
+
+- Post body
+- Hashtags
+
+Use exactly these platform values in API requests:
+
+```text
+X
+LinkedIn
+Instagram
+Facebook
+```
+
+Do not send `Twitter`, `X (Twitter)` or `X (formerly Twitter)`. The UI can display only **X**.
+
+Example request:
+
+```json
+{
+  "content_type": "social_media",
+  "parameters": {
+    "product_service": "A project-management application with shared timelines and task assignments",
+    "platform": "LinkedIn",
+    "goal": "Demo requests",
+    "tone": "professional",
+    "cta": "Request a product demo"
+  }
+}
+```
+
+## Shared UI behaviour
+
+All fields should be required initially because every field is present throughout the training data. Add these shared behaviours:
+
+- Trim unnecessary whitespace.
+- Prevent generation when required fields are empty.
+- Show character counters on long text fields.
+- Allow users to add and remove key points and characters.
+- Preserve the exact normalized values sent to the API.
+- Disable the Generate button while a request is running.
+- Provide Copy, Edit, Regenerate and Export actions after generation.
+- For X, show that the generated post and hashtags must remain within 280 characters.
+- Never add names, dates, prices, links or offers that the user did not provide.
+
+I recommend keeping model settings such as temperature, top-p and maximum tokens out of the main UI. Set those automatically in the backend based on content type; users should control the writing through the fields above. The schema matches the verified [Run02 training dataset](/Users/hasithanilwakka/projects/koodsisu/GenAI/GhostWriterAIModelTraining/data/unified/run02/train_balanced.jsonl).

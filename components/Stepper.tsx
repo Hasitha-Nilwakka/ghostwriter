@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { RxMixerVertical, RxMix, RxMagicWand, RxCheckCircled } from "react-icons/rx";
 import ContentSelector from "./ContentSelector";
 import EmailConfigurationForm from "./EmailConfigurationForm";
+import SocialMediaConfigurationForm from "./SocialMediaConfigurationForm";
+import StoryConfigurationForm from "./StoryConfirgurationForm";
 
 interface Step {
   title: string;
@@ -27,7 +29,7 @@ const steps: Step[] = [
   },
   {
     title: "Configure",
-    innerTitle : "Lets configure your selection",
+    innerTitle : "Let's configure your selection",
     description: "Setup your request",
     content: "Fine tune your output, tell me exactly what you want",
     icon: RxMixerVertical,
@@ -161,7 +163,7 @@ export default function Stepper() {
               <ContentSelector/>
             )}
             {activeStep === 1 && (
-                <EmailConfigurationForm/>
+                <StoryConfigurationForm/>
             )}
           </motion.div>
         </AnimatePresence>

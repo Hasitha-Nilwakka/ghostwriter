@@ -1,83 +1,50 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea"
-import TextareaWithCharacterCount from "./ui/textAreaWithCharCount";
+import { TbMoodSpark } from "react-icons/tb";
+import FloatingTextareaWithCount from "./FloatingTextArea";
+import { RxQuestionMarkCircled, RxPerson } from "react-icons/rx"
+import { LuWaypoints } from "react-icons/lu";
+import SelectComboBox from "./SelectComboBox";
+import { emailToneArray } from "@/data/emailTonesArray";
+import { GoStopwatch } from "react-icons/go";
+import { urgencyArray } from "@/data/urgencyArray";
+import { MdOutlineCallToAction } from "react-icons/md";
 
 export default function EmailConfigurationForm() {
   return (
-    <section className="flex flex-col gap-8 items-center w-full">
+    <section className="flex flex-col gap-8 items-center">
         <Card className="p-0! max-w-3xl w-full gap-0">
             <CardContent className="py-4! px-6!">
               <div className="flex sm:flex-row flex-col gap-6">
                 <div className="max-w-md w-full border-border sm:order-first order-last">
                   <form className="flex flex-col gap-2">
                     <div className="flex flex-col gap-0">
-                      <Field className="gap-1.5">
-                        <FieldLabel className="text-sm text-foreground font-normal">
-                          Purpose
-                        </FieldLabel>
-                        <TextareaWithCharacterCount placeholder="What is the purpose of your email" maxLength={150}/>
+                      <Field className="gap-1">
+                        <FloatingTextareaWithCount label="What is the purpose of your email" maxLength={150} icon={RxQuestionMarkCircled}/>
                       </Field>
                       <Field className="gap-1">
-                        <FieldLabel
-                          htmlFor="email"
-                          className="text-sm text-foreground font-normal"
-                        >
-                          Recipient context
-                        </FieldLabel>
-                        <TextareaWithCharacterCount placeholder="Who receives it and relevant background" maxLength={150}/>
+                        <FloatingTextareaWithCount label="Who receives it and background" maxLength={150} icon={RxPerson}/>
                       </Field>
-                      <Field className="gap-1.5">
-                        <FieldLabel
-                          htmlFor="title"
-                          className="text-sm text-muted-foreground font-normal"
-                        >
-                          Title
-                        </FieldLabel>
-                        <Input
-                          id="title"
-                          type="text"
-                          defaultValue="UI/UX Designer"
-                          className="dark:bg-background h-9 shadow-xs text-sm text-muted-foreground font-normal"
-                        />
+                      <Field className="gap-1">
+                        <FloatingTextareaWithCount label="Key points of your email, maximum 8" maxLength={150} icon={LuWaypoints}/>
                       </Field>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center gap-6">
-                        <div className="flex flex-col gap-1">
-                          <Label
-                            htmlFor="hireme"
-                            className="text-primary text-sm font-medium"
-                          >
-                            Hire me
-                          </Label>
-                          <p className="text-sm text-muted-foreground font-normal">
-                            Enabling this feature will allow other users to
-                            contact you with work inquiries.
-                          </p>
-                        </div>
-                        <Switch id="hireme" />
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="flex flex-col gap-1">
-                          <Label
-                            htmlFor="privacy"
-                            className="text-primary text-sm font-medium"
-                          >
-                            Privacy
-                          </Label>
-                          <p className="text-sm text-muted-foreground font-normal">
-                            Enabling privacy will hide your profile, only you
-                            will be able to see it. Not recommended if you’re an
-                            author.
-                          </p>
-                        </div>
-                        <Switch id="privacy" />
-                      </div>
+                      <Field className="flex! flex-row! justify-center! mt-3!">
+                        <FieldLabel className="text-sm text-muted-foreground font-normal">
+                          <TbMoodSpark size={18}/>
+                          Tone
+                        </FieldLabel>
+                        <SelectComboBox elementList={emailToneArray}/>
+                      </Field>
+                      <Field className="flex! flex-row! justify-center! mt-3! mb-2!">
+                        <FieldLabel className="text-sm text-muted-foreground font-normal">
+                          <GoStopwatch size={18}/>
+                          Urgency
+                        </FieldLabel>
+                        <SelectComboBox elementList={urgencyArray}/>
+                      </Field>
+                      <Field className="gap-1">
+                        <FloatingTextareaWithCount label="Call to action" maxLength={50} icon={MdOutlineCallToAction}/>
+                      </Field>
                     </div>
                   </form>
                 </div>

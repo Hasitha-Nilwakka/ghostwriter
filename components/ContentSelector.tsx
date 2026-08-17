@@ -1,49 +1,20 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { IconType } from "react-icons";
-import { RxEnvelopeClosed, RxPeople, RxCrumpledPaper } from "react-icons/rx";
-
-interface ContentObject {
-  id : string
-  title : string
-  desc : string
-  icon : IconType
-  color : string
-  background : string
-}
-
-const contents : ContentObject[] = [
-  {
-    id: 'content-1',
-    title: "Email",
-    desc: "Write clear, effective emails that gets results",
-    icon: RxEnvelopeClosed,
-    color: "text-blue-500",
-    background: "bg-blue-500/10",
-  },
-  {
-    id: 'content-2',
-    title: "Social Post",
-    desc: "Create engaging posts that grow your audience",
-    icon: RxPeople,
-    color: "text-orange-400",
-    background: "bg-orange-400/10",
-  },
-  {
-    id: 'content-3',
-    title: "Story",
-    desc: "Generate creative stories with just few clicks",
-    icon: RxCrumpledPaper,
-    color: "text-red-500",
-    background: "bg-red-500/10",
-  }
-]
+import {contentTypeArray } from '../data/contentTypesArray'
+import { useContentSelection, ContentType } from "@/store/contentTypeStore";
 
 export default function ContentSelector() {
+  const selectedContent = useContentSelection((state) => state.selectedContent)
+  const setSelectedContent = useContentSelection((state) => state.setSelectedContent)
+
   return (
-    <RadioGroup defaultValue="content-1" className="grid gap-2 max-w-sm">
-      {contents.map((item) => {
+    <RadioGroup 
+      value={selectedContent}
+      onValueChange={(value) => setSelectedContent(value as ContentType)}
+      className="grid gap-2 max-w-sm"
+    >
+      {contentTypeArray.map((item) => {
         const Icon = item.icon;
         return (
           <Label
@@ -66,7 +37,7 @@ export default function ContentSelector() {
                 </p>
               </div>
             </div>
-            <RadioGroupItem value={item.id} id={item.id} />
+            <RadioGroupItem value={item.id} id={item.id}/>
           </Label>
         );
       })}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, useEffect } from "react";
+import { useId, useState } from "react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -9,24 +9,14 @@ import type { SelectElementType } from "@/types/selectElements";
 
 interface Props {
   elementList : SelectElementType[]
+  placeHolder : string
+  commandPlaceholder : string
 }
 
-export default function SelectComboBox({elementList} : Props) {
+export default function SelectComboBox({elementList, placeHolder, commandPlaceholder} : Props) {
   const id = useId();
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      const timer = setTimeout(() => {
-        setMounted(true);
-      }, 50);
-      return () => clearTimeout(timer);
-    } else {
-      setMounted(false);
-    }
-  }, [open]);
 
   return (
     <div className="w-full max-w-xs">
@@ -65,7 +55,7 @@ export default function SelectComboBox({elementList} : Props) {
                 </span>
               ) : (
                 <span className="text-muted-foreground">
-                  Select the tone of the email
+                  {placeHolder}
                 </span>
               )}
               <ChevronsUpDownIcon
@@ -76,9 +66,9 @@ export default function SelectComboBox({elementList} : Props) {
           }
         />
         <PopoverContent className="border-input w-full p-0" align="start" initialFocus={false}>
-          {mounted && (
+          {open && (
             <Command>
-              <CommandInput placeholder="Search tech stack..." />
+              <CommandInput placeholder={commandPlaceholder} />
               <CommandList>
                 <CommandEmpty>No tool found.</CommandEmpty>
                 <CommandGroup>

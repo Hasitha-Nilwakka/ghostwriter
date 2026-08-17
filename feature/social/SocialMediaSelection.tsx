@@ -1,6 +1,6 @@
 import { socialMediaElementType } from "@/types/socialMediaType";
 import { socialMediaArray } from "@/data/socialMediaArray";
-import { Card } from "./ui/card";
+import { Card } from "@/components/ui/card";
 
 const socialMediaPlatformArray : socialMediaElementType[] = socialMediaArray
 

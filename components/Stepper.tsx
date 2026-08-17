@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { RxMixerVertical, RxMix, RxMagicWand, RxCheckCircled } from "react-icons/rx";
 import ContentSelector from "./ContentSelector";
-import EmailConfigurationForm from "./EmailConfigurationForm";
+import EmailConfigurationForm from "../feature/email/EmailConfigurationForm";
 import SocialMediaConfigurationForm from "./SocialMediaConfigurationForm";
-import StoryConfigurationForm from "./StoryConfirgurationForm";
+import StoryConfigurationForm from "../feature/story/StoryConfirgurationForm";
+import { useContentSelection } from "@/store/contentTypeStore";
 
 interface Step {
   title: string;
@@ -44,6 +45,8 @@ const steps: Step[] = [
 ];
 
 export default function Stepper() {
+  const selectedContent = useContentSelection((state) => state.selectedContent)
+  const resetContentSelection = useContentSelection((state) => state.resetContent)
   const [activeStep, setActiveStep] = useState(0);
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
@@ -59,6 +62,7 @@ export default function Stepper() {
 
   const handleReset = () => {
     setActiveStep(0);
+    resetContentSelection()
   };
 
   return (
@@ -162,8 +166,14 @@ export default function Stepper() {
             {activeStep === 0 && (
               <ContentSelector/>
             )}
-            {activeStep === 1 && (
-                <StoryConfigurationForm/>
+            {activeStep === 1 && selectedContent === 'email' && (
+              <EmailConfigurationForm/>
+            )}
+            {activeStep === 1 && selectedContent === 'social_media' && (
+              <SocialMediaConfigurationForm/>
+            )}
+            {activeStep === 1 && selectedContent === 'story' && (
+              <StoryConfigurationForm/>
             )}
           </motion.div>
         </AnimatePresence>
@@ -184,6 +194,7 @@ export default function Stepper() {
             <Button
               variant={'secondary'}
               className="cursor-pointer bg-primary-col text-white"
+              onClick={handleReset}
             >
               Reset
             </Button>

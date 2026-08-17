@@ -5,7 +5,7 @@ import FloatingTextareaWithCount from "./FloatingTextArea";
 import { RxPerson } from "react-icons/rx"
 import { LuWaypoints } from "react-icons/lu";
 import SelectComboBox from "./SelectComboBox";
-import { socialPostToneArray } from "@/data/SocialPostTonesArray";
+import { socialPostToneArray } from "@/data/socialPostTonesArray";
 import { MdOutlineCallToAction } from "react-icons/md";
 import SocialMediaSelection from "./SocialMediaSelection";
 import { MdOutlineLocalOffer } from "react-icons/md";
@@ -14,6 +14,7 @@ import { socialPostGoalArray } from "@/data/socialPostGoalArray";
 import { GoGoal } from "react-icons/go";
 
 export default function SocialMediaConfigurationForm() {
+
   return (
     <section className="flex flex-col gap-8 items-center">
         <Card className="p-0! max-w-3xl w-full gap-0">

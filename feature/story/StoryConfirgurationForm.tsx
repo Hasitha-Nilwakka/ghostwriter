@@ -1,19 +1,18 @@
 import { Card, CardContent} from "@/components/ui/card";
-import { Field, FieldLabel, FieldTitle } from "@/components/ui/field";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { TbMoodSpark } from "react-icons/tb";
-import FloatingTextareaWithCount from "./FloatingTextArea";
-import SelectComboBox from "./SelectComboBox";
-import { MdVideoSettings, MdDriveFileRenameOutline, MdOutlineStyle } from "react-icons/md";
+import FloatingTextareaWithCount from "../../components/FloatingTextArea";
+import SelectComboBox from "@/components/SelectComboBox";
+import { MdVideoSettings, MdOutlineStyle } from "react-icons/md";
 import { BsUiChecksGrid } from "react-icons/bs";
 import { genreArray } from "@/data/genreArray";
-import { CgGhostCharacter } from "react-icons/cg";
-import { TbShareplay, TbFileDescription, TbMoodHeart } from "react-icons/tb";
+import { TbMoodHeart } from "react-icons/tb";
 import SetStoryLength from "./SetStoryLength";
 import { storyStyleArray } from "@/data/StoryStyleArray";
 import { TfiTarget } from "react-icons/tfi";
 import { storyAudienceArray } from "@/data/storyAudienceArray";
 import { storyMoodArray } from "@/data/storyMoodArray";
-import CharacterSetUp from "./character-setup/CharacterSetUp";
+import CharacterSetUp from "../../components/character-setup/CharacterSetUp";
 
 
 export default function StoryConfigurationForm() {

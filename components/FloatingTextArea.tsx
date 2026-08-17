@@ -12,12 +12,14 @@ interface FloatingTextareaProps {
   label?: string
   maxLength?: number
   icon : IconType
+  description : string
 }
 
 export default function FloatingTextareaWithCount({
   label = 'What is the purpose of your email',
   maxLength = 150,
-  icon
+  icon,
+  description
 }: FloatingTextareaProps) {
   const id = useId()
   const [focused, setFocused] = useState(false)
@@ -31,7 +33,7 @@ export default function FloatingTextareaWithCount({
         <Icon
           className={cn(
             'mt-5 size-4 shrink-0 transition-colors duration-300',
-            isFloated ? 'text-primary' : 'text-muted-foreground'
+            isFloated ? 'text-primary-col' : 'text-form-gray'
           )}
         />
         <div className='relative flex-1'>
@@ -62,7 +64,7 @@ export default function FloatingTextareaWithCount({
               'pointer-events-none absolute left-0 cursor-text transition-all duration-300 ease-in-out text-left',
               isFloated
                 ? 'top-0.5 text-sm text-primary-col font-bold'
-                : 'top-5 text-sm text-muted-foreground'
+                : 'top-5 text-sm text-form-gray font-semibold'
             )}
           >
             {label}
@@ -81,18 +83,22 @@ export default function FloatingTextareaWithCount({
           style={{ transformOrigin: 'center' }}
         />
       </div>
-
-      {/* Character count */}
-      <p
-        className={cn(
-          'mt-1.5 text-right text-xs transition-colors',
-          value.length === maxLength
-            ? 'text-primary'
-            : 'text-muted-foreground'
-        )}
-      >
-        {value.length}/{maxLength}
-      </p>
+      <div className='flex justify-between'>
+        <div>
+          <p className='mt-1.5 text-sm text-form-gray-muted'>{description}</p>
+        </div>
+        {/* Character count */}
+        <p
+          className={cn(
+            'mt-1.5 text-right text-sm transition-colors',
+            value.length === maxLength
+              ? 'text-primary'
+              : 'text-form-gray-muted'
+          )}
+        >
+          {value.length}/{maxLength}
+        </p>
+      </div>
     </div>
   )
 }

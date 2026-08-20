@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { RxMixerVertical, RxMix, RxMagicWand, RxCheckCircled } from "react-icons/rx";
 import ContentSelector from "./ContentSelector";
 import EmailConfigurationForm from "../feature/email/EmailConfigurationForm";
-import SocialMediaConfigurationForm from "./SocialMediaConfigurationForm";
+import SocialMediaConfigurationForm from "@/feature/social/SocialMediaConfigurationForm";
 import StoryConfigurationForm from "../feature/story/StoryConfirgurationForm";
 import { useContentSelection } from "@/store/contentTypeStore";
 
@@ -167,7 +167,7 @@ export default function Stepper() {
               <ContentSelector/>
             )}
             {activeStep === 1 && selectedContent === 'email' && (
-              <EmailConfigurationForm/>
+              <EmailConfigurationForm onValidSubmission={handleNext}/>
             )}
             {activeStep === 1 && selectedContent === 'social_media' && (
               <SocialMediaConfigurationForm/>
@@ -200,7 +200,9 @@ export default function Stepper() {
             </Button>
           ) : (
             <Button
-              onClick={handleNext}
+              type='submit'
+              form='email-config'
+              onClick={activeStep === 1 ? undefined : handleNext}
               className=" hover:bg-primary/90 cursor-pointer bg-primary-col"
             >
               Next

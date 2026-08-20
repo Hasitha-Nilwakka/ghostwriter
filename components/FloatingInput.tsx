@@ -1,34 +1,35 @@
 'use client'
 
-import { useId, useState } from 'react'
+import React, { useId, useState } from 'react'
 import { IconType } from 'react-icons'
 import { motion } from 'motion/react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { Button } from './ui/button'
-import { useKeyPointStore } from '@/store/email/keyPointsStore'
 
-
-interface FloatingTextareaProps {
+interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   maxLength?: number
-  icon : IconType
-  description : string
+  icon: IconType
+  description: string
 }
 
 export default function FloatingInputWithCount({
-  label = 'What is the purpose of your email',
+  label = '',
   maxLength = 150,
   icon,
-  description
-}: FloatingTextareaProps) {
-  const id = useId()
-  const [focused, setFocused] = useState(false)
-  const [value, setValue] = useState('')
-  const isFloated = focused || value.length > 0
-  const Icon = icon
-  const addKeyPoint = useKeyPointStore((state) => state.addKeyPoint)
+  description,
+  onChange,
+  onBlur,
+  name,
+  value: controlledValue,
+  ...props
+}: FloatingInputProps) {
+    const id = useId()
+    const [focused, setFocused] = useState(false)
+    const displayValue = String(controlledValue ?? '') 
+    const isFloated = focused || displayValue.length > 0
+    const Icon = icon
 
   return (
     <div className='w-full'>
@@ -42,15 +43,23 @@ export default function FloatingInputWithCount({
         <div className='relative flex-1'>
           <Input
             id={id}
-            value={value}
+            name={name}
+            {...props}
+            value={displayValue}
             maxLength={maxLength}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {
+              if (onChange) onChange(e) 
+            }}
             onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
+            onBlur={(e) => {
+              setFocused(false)
+              if (onBlur) onBlur(e)
+            }}
             // Overriding the default textarea styles to maintain the floating underline look
             className='
               w-full
               h-auto
+              bg-transparent!
               rounded-none border-none 
               px-0 pt-5 pb-0
               text-sm 
@@ -72,14 +81,6 @@ export default function FloatingInputWithCount({
             {label}
           </Label>
         </div>
-        <Button
-            onClick={() => addKeyPoint(value)}
-            variant='outline'
-            className={cn(
-            'mt-5 size-4 shrink-0 transition-colors duration-300 cursor-pointer p-2',
-            isFloated ? 'text-primary-col' : 'text-form-gray'
-            )}
-          >+ Add</Button>
       </div>
 
       {/* Animated bottom line */}
@@ -101,12 +102,12 @@ export default function FloatingInputWithCount({
         <p
           className={cn(
             'mt-1.5 text-right text-sm transition-colors',
-            value.length === maxLength
+            displayValue.length === maxLength
               ? 'text-primary'
               : 'text-form-gray-muted'
           )}
         >
-          {value.length}/{maxLength}
+          {displayValue.length}/{maxLength}
         </p>
       </div>
     </div>

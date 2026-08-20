@@ -7,16 +7,17 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { SelectElementType } from "@/types/selectElements";
 
-interface Props {
+interface Props{
   elementList : SelectElementType[]
   placeHolder : string
   commandPlaceholder : string
+  value?: string;
+  onChange?: (value: string) => void
 }
 
-export default function SelectComboBox({elementList, placeHolder, commandPlaceholder} : Props) {
+export default function SelectComboBox({elementList, placeHolder, commandPlaceholder, value, onChange} : Props) {
   const id = useId();
   const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
 
   return (
     <div className="w-full max-w-xs">
@@ -77,7 +78,11 @@ export default function SelectComboBox({elementList, placeHolder, commandPlaceho
                       key={item.value}
                       value={item.value}
                       onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue);
+                        
+                        if (onChange) {
+                          onChange(currentValue === value ? "" : currentValue)
+                        }
+
                         setOpen(false);
                       }}
                       className="[&>svg:last-of-type]:hidden"

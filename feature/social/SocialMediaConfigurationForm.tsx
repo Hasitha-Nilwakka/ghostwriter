@@ -1,10 +1,10 @@
 import { Card, CardContent} from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { TbMoodSpark } from "react-icons/tb";
-import FloatingTextareaWithCount from "./FloatingTextArea";
+import FloatingTextareaWithCount from "@/components/FloatingTextArea";
 import { RxPerson } from "react-icons/rx"
 import { LuWaypoints } from "react-icons/lu";
-import SelectComboBox from "./SelectComboBox";
+import SelectComboBox from "@/components/SelectComboBox";
 import { socialPostToneArray } from "@/data/socialPostTonesArray";
 import { MdOutlineCallToAction } from "react-icons/md";
 import SocialMediaSelection from "./SocialMediaSelection";

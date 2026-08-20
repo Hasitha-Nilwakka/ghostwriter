@@ -1,30 +1,34 @@
 'use client'
-
-import { useId, useState } from 'react'
+import React, { useId, useState } from 'react'
 import { IconType } from 'react-icons'
 import { motion } from 'motion/react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
-
-interface FloatingTextareaProps {
+interface FloatingTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
   maxLength?: number
-  icon : IconType
-  description : string
+  icon: IconType
+  description: string
 }
 
 export default function FloatingTextareaWithCount({
-  label = 'What is the purpose of your email',
+  label = '',
   maxLength = 150,
   icon,
-  description
+  description,
+  onChange,
+  onBlur,
+  name,
+  value: controlledValue,
+  ...props
 }: FloatingTextareaProps) {
   const id = useId()
   const [focused, setFocused] = useState(false)
-  const [value, setValue] = useState('')
-  const isFloated = focused || value.length > 0
+  
+  const displayValue = String(controlledValue ?? '') 
+  const isFloated = focused || displayValue.length > 0
   const Icon = icon
 
   return (
@@ -39,12 +43,18 @@ export default function FloatingTextareaWithCount({
         <div className='relative flex-1'>
           <Textarea
             id={id}
-            value={value}
+            name={name}
+            {...props}
+            value={displayValue}
             maxLength={maxLength}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => {
+              if (onChange) onChange(e) 
+            }}
             onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            // Overriding the default textarea styles to maintain the floating underline look
+            onBlur={(e) => {
+              setFocused(false)
+              if (onBlur) onBlur(e)
+            }}
             className='
               min-w-full
               min-h-0
@@ -87,16 +97,16 @@ export default function FloatingTextareaWithCount({
         <div>
           <p className='mt-1.5 text-sm text-form-gray-muted'>{description}</p>
         </div>
-        {/* Character count */}
+        {/* Character count using the unified value */}
         <p
           className={cn(
             'mt-1.5 text-right text-sm transition-colors',
-            value.length === maxLength
+            displayValue.length === maxLength
               ? 'text-primary'
               : 'text-form-gray-muted'
           )}
         >
-          {value.length}/{maxLength}
+          {displayValue.length}/{maxLength}
         </p>
       </div>
     </div>

@@ -56,3 +56,9 @@ export const generateRequestSchema = z.discriminatedUnion(
 )
 
 export type GenerateRequest = z.infer<typeof generateRequestSchema>
+
+export const contentTypeSchema = z.enum([
+    "email",
+    "social_media",
+    "story"
+])

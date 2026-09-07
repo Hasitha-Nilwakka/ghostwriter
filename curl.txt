@@ -1,0 +1,199 @@
+Social Post
+
+curl -i -X POST \
+  http://localhost:3000/api/generate/start \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "content_type": "social_media",
+    "parameters": {
+      "product_service": "A car repair service that visits customers at home",
+      "platform": "X",
+      "goal": "Encourage local customers to book a repair",
+      "tone": "Helpful and friendly",
+      "cta": "Book a doorstep tune-up"
+    }
+  }'
+
+Status check
+  curl -i -X POST \
+http://localhost:3000/api/generate/status/5682209b-6c34-48c9-9c00-c7480281294c-e2 \
+-H 'Content-Type: application/json' \
+-d '{
+  "request": {
+    "content_type": "social_media",
+    "parameters": {
+      "product_service": "A mobile bicycle repair service that visits customers at home",
+      "platform": "X",
+      "goal": "Encourage local customers to book a repair",
+      "tone": "Helpful and friendly",
+      "cta": "Book a doorstep tune-up"
+    }
+  },
+  "attempt": 0
+}'
+
+Retry check
+curl -i -X POST \
+http://localhost:3000/api/generate/retry \
+-H 'Content-Type: application/json' \
+-d '{
+  "request": {
+    "content_type": "social_media",
+    "parameters": {
+      "product_service": "A car repair service that visits customers at home",
+      "platform": "X",
+      "goal": "Encourage local customers to book a repair",
+      "tone": "Helpful and friendly",
+      "cta": "Book a doorstep tune-up"
+    }
+  },
+  "issues": [
+    {
+      "code": "X_CHARACTER_LIMIT_EXCEEDED",
+      "message": "The combined X post contains 398 characters; the limit is 280."
+    }
+  ]
+}'
+
+
+EMAIL generate
+
+curl -i -X POST \
+http://localhost:3000/api/generate/start \
+-H 'Content-Type: application/json' \
+-d '{
+  "content_type": "email",
+  "parameters": {
+    "purpose": "Follow up with a customer after a product demonstration",
+    "recipient_context": "The customer attended a demonstration of our project management software yesterday",
+    "key_points": [
+      "Thank them for their time",
+      "Ask whether they have any questions",
+      "Offer another short meeting if needed"
+    ],
+    "tone": "Professional and friendly",
+    "urgency": "normal",
+    "cta": "Reply to arrange a follow-up meeting"
+  }
+}'
+
+status
+
+curl -i -X POST \
+http://localhost:3000/api/generate/status/f2b914de-f7fc-43cc-aaa8-474276bb97d7-e2 \
+-H 'Content-Type: application/json' \
+-d '{
+  "request": {
+    "content_type": "email",
+    "parameters": {
+      "purpose": "Follow up with a customer after a product demonstration",
+      "recipient_context": "The customer attended a demonstration of our project management software yesterday",
+      "key_points": [
+        "Thank them for their time",
+        "Ask whether they have any questions",
+        "Offer another short meeting if needed"
+      ],
+      "tone": "Professional and friendly",
+      "urgency": "normal",
+      "cta": "Reply to arrange a follow-up meeting"
+    }
+  },
+  "attempt": 0
+}'
+
+Story generate
+
+curl -i -X POST \
+http://localhost:3000/api/generate/start \
+-H 'Content-Type: application/json' \
+-d '{
+  "content_type": "story",
+  "parameters": {
+    "genre": "Adventure",
+    "characters": [
+      {
+        "name": "Maya",
+        "role": "Young explorer",
+        "description": "Curious, brave, and always carries a small notebook"
+      },
+      {
+        "name": "Leo",
+        "role": "Maya'\''s best friend",
+        "description": "Careful, clever, and good at solving puzzles"
+      }
+    ],
+    "setting": "An abandoned lighthouse on a stormy island",
+    "length_words": 400,
+    "style": "Clear, vivid, and engaging",
+    "target_audience": "Young adults",
+    "mood": "Mysterious but hopeful"
+  }
+}'
+
+status
+
+curl -i -X POST \
+http://localhost:3000/api/generate/status/9720f716-59ee-4261-86c3-03f371167778-e1 \
+-H 'Content-Type: application/json' \
+-d '{
+  "request": {
+    "content_type": "story",
+    "parameters": {
+      "genre": "Adventure",
+      "characters": [
+        {
+          "name": "Maya",
+          "role": "Young explorer",
+          "description": "Curious, brave, and always carries a small notebook"
+        },
+        {
+          "name": "Leo",
+          "role": "Maya'\''s best friend",
+          "description": "Careful, clever, and good at solving puzzles"
+        }
+      ],
+      "setting": "An abandoned lighthouse on a stormy island",
+      "length_words": 400,
+      "style": "Clear, vivid, and engaging",
+      "target_audience": "Young adults",
+      "mood": "Mysterious but hopeful"
+    }
+  },
+  "attempt": 1
+}'
+
+retry
+curl -i -X POST \
+http://localhost:3000/api/generate/retry \
+-H 'Content-Type: application/json' \
+-d '{
+  "request": {
+    "content_type": "story",
+    "parameters": {
+      "genre": "Adventure",
+      "characters": [
+        {
+          "name": "Maya",
+          "role": "Young explorer",
+          "description": "Curious, brave, and always carries a small notebook"
+        },
+        {
+          "name": "Leo",
+          "role": "Maya'\''s best friend",
+          "description": "Careful, clever, and good at solving puzzles"
+        }
+      ],
+      "setting": "An abandoned lighthouse on a stormy island",
+      "length_words": 400,
+      "style": "Clear, vivid, and engaging",
+      "target_audience": "Young adults",
+      "mood": "Mysterious but hopeful"
+    }
+  },
+  "issues": [
+    {
+      "code": "STORY_WORD_COUNT_OUT_OF_RANGE",
+      "message": "The story contains 498 words; the allowed range is 360–441."
+    }
+  ]
+}'

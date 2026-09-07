@@ -18,7 +18,7 @@ const notoSans = Noto_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "/-- ghostwriter",
+  title: "ghostwriter",
   description: "ghost is working",
 };
 

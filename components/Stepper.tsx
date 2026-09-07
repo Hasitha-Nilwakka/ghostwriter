@@ -45,6 +45,7 @@ const steps: Step[] = [
 ];
 
 export default function Stepper() {
+  const contentType = useContentSelection((state) => state.selectedContent)
   const selectedContent = useContentSelection((state) => state.selectedContent)
   const resetContentSelection = useContentSelection((state) => state.resetContent)
   const [activeStep, setActiveStep] = useState(0);
@@ -142,9 +143,6 @@ export default function Stepper() {
           );
         })}
       </div>
-
-      {/* Divider */}
-      <hr className="border-border/50 p-0!"/>
 
       {/* Stepper Content Area with animations */}
       <div className="min-h-32 flex flex-col justify-center items-center text-center">

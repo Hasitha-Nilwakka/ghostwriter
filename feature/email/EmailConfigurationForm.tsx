@@ -17,6 +17,9 @@ import { LuWaypoints } from "react-icons/lu";
 import KeyPointList from "@/feature/email/KeyPointList";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PiTarget } from "react-icons/pi"
+import TextareaWithCount from "@/components/ui/textAreaWithCount";
+import { InpurWithCount } from "@/components/ui/inputWithCount";
 
 interface Props {
   onValidSubmission : () => void
@@ -31,7 +34,7 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
   const {control, handleSubmit, formState: { errors }} = useForm<EmailConfigSchema>({
       resolver : zodResolver(emailConfigurationObjectSchema),
       defaultValues : currentConfig,
-      mode : 'all'
+      mode : 'onTouched'
   })
 
   const {fields, append, remove} = useFieldArray({
@@ -69,7 +72,7 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
               <div className="flex sm:flex-row flex-col gap-6">
                 <div className="max-w-md w-full border-border sm:order-first order-last">
                   <form className="flex flex-col gap-2" id="email-config" onSubmit={handleSubmit(handleFormSubmit)}>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-4">
                       
                       {/* Purpose field*/}
                       <Field className="gap-1">
@@ -77,12 +80,13 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                           name="purpose"
                           control={control}
                           render={({field}) => (
-                            <FloatingTextareaWithCount
+                            <TextareaWithCount
                               {...field}
+                              id="email-purpose"
                               label="Purpose"
-                              description="what is the purpose of your email" 
-                              maxLength={150} 
-                              icon={RxQuestionMarkCircled}
+                              Icon={PiTarget}
+                              maxLength={150}
+                              placeHolder="What is the purpose of your email" 
                             />
                           )}
                         />
@@ -95,12 +99,13 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                           name="reciientDetails"
                           control={control}
                           render={({field}) => (
-                            <FloatingTextareaWithCount
+                            <TextareaWithCount
                               {...field}
+                              id="email-reciientDetails"
                               label="Recipient details"
-                              description="who receives it and their background" 
-                              maxLength={150} 
-                              icon={RxPerson}
+                              Icon={RxPerson}
+                              maxLength={150}
+                              placeHolder="who receives it and their background" 
                             />
                           )}
                         />
@@ -109,22 +114,24 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                       
                       {/** Key Points */}
                       <Field className="gap-1">
-                        <div className="flex gap-2 items-center">
-                          <FloatingInputWithCount
+                        <div className="flex flex-col gap-2">
+                          <InpurWithCount
+                              name="email-keypoints"
+                              id="email-keypoints"
                               value={pointInput}
                               onChange={(e) => setPointInput(e.target.value)}
-                              description="1–8 points"
+                              placeHolder="1 to 8 points"
                               label="Key points of your email" 
                               maxLength={150} 
-                              icon={LuWaypoints}
+                              Icon={LuWaypoints}
                               disabled={fields.length >= 8}
                           />
                           <Button
-                            variant='default'
+                            variant='secondary'
                             type='button'
                             onClick={handleAddKeyPoint}
                           >
-                            Add
+                            + add point
                           </Button>
                         </div>
                         {pointError && (
@@ -139,10 +146,10 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                       </Field>
 
                       {/** Tone */}
-                      <Field className="flex! flex-col! mt-3!">
-                        <div className="flex! flex-row! justify-between!">
-                          <FieldLabel className="text-sm text-form-gray font-semibold">
-                            <TbMoodSpark size={18}/>
+                      <Field className="gap-1">
+                        <div className="flex! flex-col! justify-between! gap-2">
+                          <FieldLabel className="text-sm font-semibold">
+                            <TbMoodSpark size={18} className="text-primary-col"/>
                             Tone
                           </FieldLabel>
                           <Controller
@@ -162,18 +169,18 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                       </Field>
                       
                       {/**Urgency */}
-                      <Field className="flex! flex-col! mt-3! mb-2!">
-                        <div className="flex! flex-row! justify-between!">
-                          <FieldLabel className="text-sm text-form-gray font-semibold">
-                            <GoStopwatch size={18}/>
+                      <Field className="gap-1">
+                        <div className="flex! flex-col! justify-between! gap-2">
+                          <FieldLabel className="text-sm font-semibold">
+                            <GoStopwatch size={18} className="text-primary-col"/>
                             Urgency
                           </FieldLabel>
                           <Controller
                             name="urgency"
                             control={control}
                             render={({field}) => (
-                              <SelectComboBox
-                                {...field} 
+                              <SelectComboBox 
+                                {...field}
                                 elementList={urgencyArray}
                                 placeHolder="Select urgency"
                                 commandPlaceholder="Search urgency"
@@ -181,7 +188,7 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                             )}
                           />
                         </div>
-                        {errors.urgency?.message && <DisplayValidationError errMsg={errors.urgency.message}/>}
+                      {errors.urgency?.message && <DisplayValidationError errMsg={errors.urgency.message}/>}
                       </Field>
                       
                       {/**Urgency */}
@@ -190,12 +197,13 @@ export default function EmailConfigurationForm({onValidSubmission} : Props) {
                           name="cta"
                           control={control}
                           render={({field}) => (
-                            <FloatingTextareaWithCount
-                              {...field} 
+                            <TextareaWithCount
+                              {...field}
+                              id="email-cta"
                               label="Call to action"
-                              description="the single action the recipient should take" 
-                              maxLength={50} 
-                              icon={MdOutlineCallToAction}
+                              Icon={MdOutlineCallToAction}
+                              maxLength={150}
+                              placeHolder="the single action the recipient should take" 
                             />
                           )}
                         />

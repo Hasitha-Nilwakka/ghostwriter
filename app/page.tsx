@@ -1,69 +1,54 @@
-import { ToggleTheme } from "@/components/lightswind/toggle-theme";
 import Image from "next/image";
-import Stepper from "@/components/Stepper";
-import { FiShield } from "react-icons/fi";
-import { IoLockClosedOutline } from "react-icons/io5";
-import { GoDownload } from "react-icons/go";
+import MainPage from "@/components/main-page/MainPage";
+import ThemeToggle from "@/components/ui/theme-toggle";
+import { AbstractOuter } from "@/components/ui/abstractOuter";
+
 export default function Home() {
   return (
     <div 
       className="
-        bg-bg-color dark:bg-bg-dark 
-        min-h-screen h-full w-full
-        px-5"
-    > 
-      <div className="flex justify-between items-center py-5 px-5 w-full">
-        {/**Dark and Light mode switch and logos */}
-        <Image 
-          src={"/logo-light.png"}
-          width={200}
-          height={100}
-          alt=""
-          className="dark:hidden h-auto w-auto"
-        />
-        <Image 
-          src={"/logo-dark.png"}
-          width={200}
-          height={100}
-          alt=""
-          className="hidden dark:block h-auto w-auto"
-        />
-        <ToggleTheme
-          duration={600}
-          className="text-text-primary dark:text-text-primary-dark"
-        />
-      </div>
-      <div className="flex flex-col w-full">
-        <div className="flex flex-col items-center mb-2 text-text-primary">
-          <h1 className="font-bold text-3xl">A little input.</h1>
-          <h1 className="font-bold text-3xl">A lot of writing <span>magic.</span></h1>
+        px-5
+        bg-bg-light dark:bg-black 
+        transition-all duration-300 
+        mb-5
+        h-screen
+        
+        lg:bg-linear-to-r/increasing lg:from-indigo-500 lg:to-teal-400 
+        lg:p-1"
+    >
+      {/**Ghostwriter text and theme button */}
+      <div 
+        className="
+        bg-bg-light 
+        dark:bg-black
+        h-full
+        transition-all duration-300
+        relative isolate
+
+        lg:p-5 lg:rounded-2xl"
+      >
+        <AbstractOuter/>
+        <div className="flex justify-between items-center py-10 lg:px-10 lg:pt-5 lg:pb-10">
+          <div className="flex items-end">
+            <Image
+              className="hidden lg:block transition-all duration-300"
+              src={'/ghost.png'}
+              alt="text ghostwritter"
+              width={75}
+              height={75}
+              />
+            <Image
+              src={'/text.png'}
+              alt="text ghostwritter"
+              width={150}
+              height={75}
+            />
+          </div>
+          <ThemeToggle/>
         </div>
-          <p
-            className="text-text-secondary text-center px-4 text-sm"
-          >Choose what you want to create, set the tone and turn your ideas into polished contents in seconds</p>
-      </div>
-      <div className="flex justify-evenly py-4">
-        <div className="bg-primary-soft w-fit py-2 px-3 rounded-full text-text-primary flex items-center gap-1 text-xs">
-        <FiShield className="text-primary-col" size={15}/>
-          <p className="">
-            No account
-          </p>
+        <div className="min-h-full">
+        <MainPage/>
         </div>
-        <div className="bg-primary-soft w-fit py-2 px-3 rounded-full text-text-primary flex items-center gap-1 text-xs">
-        <IoLockClosedOutline className="text-primary-col" size={15}/>
-          <p className="">
-            Nothing stored
-          </p>
-        </div>
-        <div className="bg-primary-soft w-fit py-2 px-3 rounded-full text-text-primary flex items-center gap-1 text-xs">
-        <GoDownload className="text-primary-col" size={15}/>
-          <p>
-            Ready to export
-          </p>
-        </div>
-      </div>
-      <div>
-        <Stepper/>
       </div>
     </div>
   );

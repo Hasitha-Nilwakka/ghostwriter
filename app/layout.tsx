@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from 'next-themes'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +26,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
+      suppressHydrationWarning
       lang="en"
       className={`${geistSans.variable} ${notoSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <ThemeProvider attribute={"class"} enableSystem defaultTheme="system">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

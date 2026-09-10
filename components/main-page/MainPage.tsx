@@ -1,12 +1,16 @@
+"use client"
 import Image from "next/image";
-import ContentCard from "./ContentCard";
-import { MdMail, MdBookmarks, MdAod  } from "react-icons/md";
 import SecondaryHero from "./SecondaryHero";
-import { HiOutlineSparkles } from "react-icons/hi2";
 import { Separator } from '@/components/ui/separator'
 import { AbstractBg } from "../ui/abstractMain";
+import { useCurrentStepStore, currentStep } from "@/store/currentStep";
+import ContentSelector from "./ContentSelector";
+import { useContentTypeStore, contentType } from "@/store/selectedContentType";
+import EmailConfig from "./EmailConfig";
 
 export default function MainPage() {
+    const {currentStage} = useCurrentStepStore()
+    const { selectedContent } = useContentTypeStore()
     return (
         <div 
             className="
@@ -17,7 +21,7 @@ export default function MainPage() {
                 lg:flex-row lg:gap-5 lg:min-h-max 
                 lg:bg-bg-light lg:dark:bg-black">
             <AbstractBg/>
-            <div className="lg:flex-1 xl:flex-1 lg:min-h-full lg:p-5">
+            <div className="lg:flex-1 xl:flex-1 lg:min-h-full lg:p-5 transition-all duration-300">
                 {/**Ghost logo */}
                 <div className="flex justify-center">
                     <Image
@@ -78,75 +82,8 @@ export default function MainPage() {
                 <SecondaryHero/>
             </div>
             {/**Content type selector */}
-            <div 
-                className="
-                mt-3 
-
-                lg:flex lg:flex-col lg:flex-1 
-                lg:gap-5 lg:px-5 lg:py-10 lg:min-h-full
-                lg:items-center
-                
-                xl:flex-2"
-            >
-                <div className="flex items-center gap-1 py-3">
-                    <HiOutlineSparkles
-                        className="
-                        text-indigo-500 
-                        animate-pulsing animate-duration-800 
-                        animate-delay-1000 animate-steps-retro 
-                        animate-iteration-count-infinite 
-                        animate-fill-mode-forwards"
-                        size={25}
-                    />
-                    <p 
-                        className="
-                        text-xl font-bold 
-                        text-light-text-main 
-                        dark:text-dark-text-main 
-                        text-shadow-2xs 
-                        text-shadow-gray-200 
-                        dark:text-shadow-gray-600
-                        transition-all duration-300"
-                    >
-                        What do you want to create
-                    </p>
-                </div>
-                <div className="flex flex-col gap-5 lg:gap-7">
-                    <ContentCard 
-                        title="Email" 
-                        subText="Write clear, effective emails." 
-                        Icon={MdMail}
-                        backdropColor={
-                            {color1 : '#add7f6', color2 : '#3f8efc'}
-                        }
-                        iconBg={
-                            {color1 : '#06B6D4', color2 : '#3B82F6'}
-                        }
-                    />
-                    <ContentCard 
-                        title="Social Media" 
-                        subText="Create posts that stands out." 
-                        Icon={MdAod}
-                        backdropColor={
-                            {color1 : '#f2daff', color2 : '#e3c7ff'}
-                        }
-                        iconBg={
-                            {color1 : '#8e51ff', color2 : '#d946ef'}
-                        }
-                    />
-                    <ContentCard 
-                        title="Short story" 
-                        subText="Turn an idea into a story." 
-                        Icon={MdBookmarks}
-                        backdropColor={
-                            {color1 : '#ffc971', color2 : '#ff9e00'}
-                        }
-                        iconBg={
-                            {color1 : '#efa421', color2 : '#d8750a'}
-                        }
-                    />
-                </div>
-            </div>
+            {currentStage === currentStep.step1 && <ContentSelector/>}
+            {currentStage === currentStep.step2 && selectedContent === contentType.email && <EmailConfig/>}
         </div>
     )
 }

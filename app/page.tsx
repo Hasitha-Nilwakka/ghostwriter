@@ -12,7 +12,7 @@ export default function Home() {
         transition-all duration-300 
         mb-5
         h-screen
-        
+
         lg:bg-linear-to-r/increasing lg:from-indigo-500 lg:to-teal-400 
         lg:p-1"
     >

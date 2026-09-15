@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from "@/components/ui/toast"
+import { Providers } from "./provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,8 +34,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute={"class"} enableSystem defaultTheme="system">
+        <Providers>
           {children}
+        </Providers>
         </ThemeProvider>
+        <Toaster/>
       </body>
     </html>
   );

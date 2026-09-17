@@ -20,8 +20,6 @@ import { currentStep, useCurrentStepStore } from "@/store/currentStep"
 import { useGenerateEmail } from "@/queries/generateEmailRequest"
 import AlertFlow from "../ui/alertFlow"
 
-
-
 export default function EmailConfig() {
     const {setCurrentStep} = useCurrentStepStore()
     const {mutate, isSuccess, isPending, isError } = useGenerateEmail()
@@ -41,7 +39,7 @@ export default function EmailConfig() {
 
     const alertStatus = isPending ? 'pending' : isSuccess? 'success' : isError? 'failed' : 'idle'
 
-    async function submitForm(data : EmailConfigSchema) {
+    function submitForm(data : EmailConfigSchema) {
         mutate(data)
     }
 
@@ -225,7 +223,7 @@ export default function EmailConfig() {
                     <FieldSeparator/>
                 </Field>
                 <Field className="flex! flex-row! w-fit! justify-between items-center">
-                    <Button type='button' variant='outline' className='w-fit!' onClick={() => setCurrentStep(currentStep.step1)}>Back</Button>
+                    <Button type='button' variant='outline' className='w-fit!' onClick={() => setCurrentStep(currentStep.step1)} disabled={isPending}>Back</Button>
                     <Button type='submit' variant='default' className='w-fit!'>Generate</Button>
                 </Field>
             </form>

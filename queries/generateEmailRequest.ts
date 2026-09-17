@@ -1,9 +1,11 @@
 import { GenerateRequest } from '@/schema/contentTypeSchema'
 import { EmailConfigSchema } from '@/schema/emailConfigSchema'
+import { startPolling, useEmailPollingStore } from '@/store/emailPolling'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 
 export const useGenerateEmail = () => {
+    const {setRequest, startJob} = useEmailPollingStore()
     return useMutation({
         mutationFn : async (data : EmailConfigSchema) => {
             const {recipient_name, recipient_background} = data
@@ -22,11 +24,14 @@ export const useGenerateEmail = () => {
                 }
             }
 
-            const response = await axios.post<GenerateRequest>('/api/start', requestData)
+            const response = await axios.post<{ jobId: string, status: string }>('/api/start', requestData)
+            setRequest(requestData)
+            startJob(response?.data?.jobId)
             return response.data
         },
         onSuccess : () => {
-          console.log('request sent')  
+            startPolling()
+            console.log('request sent')  
         },
         onError : (error) => {
             console.error(error)

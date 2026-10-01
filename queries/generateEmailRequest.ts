@@ -5,35 +5,52 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 
 export const useGenerateEmail = () => {
-    const {setRequest, startJob} = useEmailPollingStore()
+    const { setRequest, startJob } = useEmailPollingStore()
+
     return useMutation({
-        mutationFn : async (data : EmailConfigSchema) => {
-            const {recipient_name, recipient_background} = data
-            const recipient_context = `recipient: ${recipient_name}, background : ${recipient_background}`
-            const keyPoints : string[] = data.key_points.map(k => k.text)
+        mutationFn: async (data: EmailConfigSchema) => {
+            const {
+                recipient_name,
+                recipient_background
+            } = data
+
+            const recipient_context = `recipient: ${recipient_name}, background: ${recipient_background}`
+
+            const keyPoints: string[] = data.key_points.map(
+                k => k.text
+            )
+
             const tones = data.tone.toString()
-            const requestData : GenerateRequest = {
-                content_type : "email",
-                parameters : {
-                    purpose : data.purpose,
-                    recipient_context : recipient_context,
-                    key_points : keyPoints,
-                    tone : tones,
-                    urgency : data.urgency,
-                    cta : data.cta
+
+            const requestData: GenerateRequest = {
+                content_type: "email",
+                parameters: {
+                    purpose: data.purpose,
+                    recipient_context: recipient_context,
+                    key_points: keyPoints,
+                    tone: tones,
+                    urgency: data.urgency,
+                    cta: data.cta
                 }
             }
 
-            const response = await axios.post<{ jobId: string, status: string }>('/api/start', requestData)
+            const response = await axios.post<{
+                jobId: string
+                status: string
+            }>('/api/start', requestData)
+
             setRequest(requestData)
-            startJob(response?.data?.jobId)
+            startJob(response.data.jobId)
+
             return response.data
         },
-        onSuccess : () => {
+
+        onSuccess: () => {
             startPolling()
-            console.log('request sent')  
+            console.log('request sent')
         },
-        onError : (error) => {
+
+        onError: (error) => {
             console.error(error)
         }
     })

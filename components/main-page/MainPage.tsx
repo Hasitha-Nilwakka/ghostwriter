@@ -8,7 +8,8 @@ import ContentSelector from "./ContentSelector";
 import { useContentTypeStore, contentType } from "@/store/selectedContentType";
 import EmailConfig from "./EmailConfig";
 import SocialMediaConfig from "./SocialMediaConfig";
-import EmailResult from "./EmailResult";
+import LoadingResult from "./LoadingResult";
+import GeneratedEmailContent from "./generated/GeneratedEmailContent";
 
 export default function MainPage() {
     const { currentStage } = useCurrentStepStore()
@@ -101,7 +102,7 @@ export default function MainPage() {
             {currentStage === currentStep.step1 && <ContentSelector/>}
             {currentStage === currentStep.step2 && selectedContent === contentType.email && <EmailConfig/>}
             {currentStage === currentStep.step2 && selectedContent === contentType.social_media && <SocialMediaConfig/>}
-            {currentStage === currentStep.step3 && <EmailResult/>}
+            {currentStage === currentStep.step3 && <GeneratedEmailContent />}
         </div>
     )
 }

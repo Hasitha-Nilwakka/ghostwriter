@@ -31,3 +31,36 @@
     @apply font-sans; 
   } 
 }
+
+@theme inline {
+  @keyframes snake {
+  0%, 100% {
+    clip-path : inset(0 0 95% 0);
+    }
+  25% {
+    clip-path : inset(0 95% 0 0);
+    }
+  50% {
+    clip-path : inset(95% 0 0 0);
+    }
+  75% {
+    clip-path : inset(0 0 0 95%);
+    }
+  }
+  @keyframes shimmer {
+  0% {
+    transform : translateX(-100%);
+    }
+  100% {
+    transform : translateX(100%);
+    }
+  }
+}
+
+@utility animate-snake {
+    animation : snake 2s linear infinite;
+}
+
+@utility animate-shimmer {
+    animation : shimmer 2s infinite;
+}

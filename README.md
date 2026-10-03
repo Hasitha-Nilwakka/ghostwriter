@@ -6,6 +6,7 @@
 
 ## 📑 Table of Contents
 
+- [Tester & Evaluator Guide (Rubric Mapping)](./TESTING_GUIDE.md)
 - [Project Overview](#-project-overview)
 - [Tech Stack](#-tech-stack)
 - [Architecture & Processing Pipeline](#-architecture--processing-pipeline)

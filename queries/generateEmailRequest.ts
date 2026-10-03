@@ -51,7 +51,10 @@ export const useGenerateEmail = () => {
         },
 
         onError: (error) => {
-            console.error(error)
+            console.error("Email generation request failed:", error)
+            useEmailPollingStore.getState().setError(
+                "Unable to start the generation job. Please check your network connection and try again."
+            )
         }
     })
 }

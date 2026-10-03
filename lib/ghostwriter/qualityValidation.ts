@@ -13,7 +13,8 @@ export type QualityIssue = {
     | "HASHTAG_IN_POST_BODY"
     | "X_CHARACTER_LIMIT_EXCEEDED"
     | "STORY_WORD_COUNT_OUT_OF_RANGE"
-    | "STORY_CHARACTER_MISSING";
+    | "STORY_CHARACTER_MISSING"
+    | "INAPPROPRIATE_CONTENT_DETECTED";
   message: string;
 };
 
@@ -31,6 +32,13 @@ export type QualityValidationResult = {
   metrics: QualityMetrics;
 };
 
+// Heuristic safety check for harmful or dangerous keywords
+const UNSAFE_CONTENT_REGEX = /\b(?:kill yourself|suicide method|bomb threat|credit card stolen|cvv number)\b/i;
+
+function containsHarmfulContent(text: string): boolean {
+  return UNSAFE_CONTENT_REGEX.test(text);
+}
+
 export function validateGeneratedContent(
   request: GenerateRequest,
   content: GeneratedContent,
@@ -40,12 +48,25 @@ export function validateGeneratedContent(
 
   switch (request.content_type) {
     case "email": {
-      emailOutputSchema.parse(content);
+      const email = emailOutputSchema.parse(content);
+      if (containsHarmfulContent(email.subject) || containsHarmfulContent(email.body)) {
+        issues.push({
+          code: "INAPPROPRIATE_CONTENT_DETECTED",
+          message: "The generated email contains inappropriate or harmful content.",
+        });
+      }
       break;
     }
 
     case "social_media": {
       const social = socialMediaOutputSchema.parse(content);
+
+      if (containsHarmfulContent(social.post_body)) {
+        issues.push({
+          code: "INAPPROPRIATE_CONTENT_DETECTED",
+          message: "The generated social post contains inappropriate or harmful content.",
+        });
+      }
 
       if (/#[\p{L}\p{N}_]+/u.test(social.post_body)) {
         issues.push({
@@ -81,6 +102,14 @@ export function validateGeneratedContent(
 
     case "story": {
       const generatedStory = storyOutputSchema.parse(content);
+
+      if (containsHarmfulContent(generatedStory.title) || containsHarmfulContent(generatedStory.story)) {
+        issues.push({
+          code: "INAPPROPRIATE_CONTENT_DETECTED",
+          message: "The generated story contains inappropriate or harmful content.",
+        });
+      }
+
       const requestedWords = request.parameters.length_words;
 
       const minimumWords = Math.floor(requestedWords * 0.9);

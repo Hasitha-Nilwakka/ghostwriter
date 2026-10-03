@@ -7,15 +7,17 @@ export default function ContentSelector() {
     return (
         <div 
             className="
-            mt-3 
-
-            lg:flex lg:flex-col lg:flex-1 
-            lg:gap-5 lg:px-5 lg:py-10 lg:min-h-full
-            lg:items-center
-            
-            xl:flex-2"
+            mt-4 sm:mt-6 lg:mt-0
+            flex flex-col flex-1
+            items-center
+            w-full max-w-md sm:max-w-lg lg:max-w-none
+            mx-auto
+            gap-3 sm:gap-5 lg:gap-6
+            lg:px-4 lg:py-4
+            xl:flex-2
+            lg:h-[680px] lg:justify-center"
         >
-            <div className="flex items-center gap-1 py-3">
+            <div className="flex items-center gap-1.5 py-2 sm:py-3">
                 <HiOutlineSparkles
                     className="
                     text-indigo-500 
@@ -23,22 +25,22 @@ export default function ContentSelector() {
                     animate-delay-1000 animate-steps-retro 
                     animate-iteration-count-infinite 
                     animate-fill-mode-forwards"
-                    size={25}
+                    size={24}
                 />
                 <p 
                     className="
-                    text-xl font-bold 
+                    text-lg sm:text-xl font-bold 
                     text-light-text-main 
                     dark:text-dark-text-main 
                     text-shadow-2xs 
                     text-shadow-gray-200 
                     dark:text-shadow-gray-600
-                    transition-all duration-300"
+                    transition-colors duration-200"
                 >
                     What do you want to create
                 </p>
             </div>
-            <div className="flex flex-col gap-5 lg:gap-7">
+            <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6 w-full items-center">
                 <ContentCard 
                     title="Email" 
                     subText="Write clear, effective emails." 
@@ -53,7 +55,7 @@ export default function ContentSelector() {
                 />
                 <ContentCard 
                     title="Social Media" 
-                    subText="Create posts that stands out." 
+                    subText="Create posts that stand out." 
                     icon="aod"
                     backdropColor={
                         {color1 : '#f2daff', color2 : '#e3c7ff'}
@@ -64,7 +66,7 @@ export default function ContentSelector() {
                     contentType={contentType.social_media}
                 />
                 <ContentCard 
-                    title="Short story" 
+                    title="Short Story" 
                     subText="Turn an idea into a story." 
                     icon="bookmarks"
                     backdropColor={

@@ -13,6 +13,7 @@ const retryRequestSchema = z.strictObject({
         "X_CHARACTER_LIMIT_EXCEEDED",
         "STORY_WORD_COUNT_OUT_OF_RANGE",
         "STORY_CHARACTER_MISSING",
+        "INAPPROPRIATE_CONTENT_DETECTED",
       ]),
       message: z.string(),
     }),

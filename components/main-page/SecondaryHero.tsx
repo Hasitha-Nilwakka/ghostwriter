@@ -8,12 +8,13 @@ export default function SecondaryHero() {
                 items-center gap-1 
                 backdrop-blur-lg 
                 shadow-sm
-                dark:shadow-xs 
                 shadow-gray-200
-                dark:shadow-gray-400 
+                dark:shadow-none
+                dark:bg-zinc-900/40
+                dark:border dark:border-white/10
                 rounded-2xl p-4
                 inset-shadow-sm
-                transition-all duration-300`
+                transition-colors duration-200`
     const titleTextStyle = `
                 text-lg font-semibold 
                 text-light-text-main 
@@ -22,19 +23,19 @@ export default function SecondaryHero() {
                 text-shadow-2xs 
                 text-shadow-gray-200
                 dark:text-shadow-none
-                transition-all duration-300`
+                transition-colors duration-200`
     const textStyle = `
                 text-center 
                 text-light-text-background 
-                dark:text-dark-text-background
+                dark:text-dark-text-background 
                 font-semibold 
-                transition-all duration-300`
+                transition-colors duration-200`
     return (
         <div className="hidden lg:flex lg:gap-2">
             <div className={outerDivStyle}>
                 <RiFlashlightLine
-                    size={50}
-                    className="bg-[#f2daff] text-[#d946ef] p-3 rounded-full"
+                    size={44}
+                    className="bg-[#f2daff] text-[#d946ef] dark:bg-purple-950/70 dark:text-purple-300 p-2.5 rounded-full transition-colors duration-200"
                 />
                 <p className={titleTextStyle}>Fast</p>
                 <div className={textStyle}>
@@ -44,8 +45,8 @@ export default function SecondaryHero() {
             </div>
             <div className={outerDivStyle}>
                 <LuBrain 
-                    size={50}
-                    className="bg-[#add7f6] text-[#3B82F6] p-3 rounded-full"
+                    size={44}
+                    className="bg-[#add7f6] text-[#3B82F6] dark:bg-blue-950/70 dark:text-blue-300 p-2.5 rounded-full transition-colors duration-200"
                 />
                 <p className={titleTextStyle}>Smart</p>
                 <div className={textStyle}>
@@ -55,8 +56,8 @@ export default function SecondaryHero() {
             </div>
             <div className={outerDivStyle}>
                 <ImCloudDownload
-                    size={50}
-                    className="bg-[#ffc971] text-[#d8750a] p-3 rounded-full"
+                    size={44}
+                    className="bg-[#ffc971] text-[#d8750a] dark:bg-amber-950/70 dark:text-amber-300 p-2.5 rounded-full transition-colors duration-200"
                 />
                 <p className={titleTextStyle}>Export</p>
                 <div className={textStyle}>

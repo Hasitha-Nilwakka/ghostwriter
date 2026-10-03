@@ -18,7 +18,7 @@ import {
 
 export const AbstractBg: React.FC = () => {
   return (
-    <div className="hidden lg:block absolute inset-0 -z-10 pointer-events-none overflow-hidden select-none opacity-70 dark:opacity-20">
+    <div className="hidden lg:block absolute inset-0 -z-10 pointer-events-none overflow-hidden select-none opacity-70 dark:opacity-20 transition-opacity duration-200">
       
       <div className="absolute -top-20 left-1/4 w-lg h-128 bg-linear-to-br from-emerald-500/8 via-teal-500/5 dark:from-emerald-400/18 dark:via-teal-400/12 to-transparent rounded-full blur-3xl mix-blend-plus-lighter" />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-160 h-112 bg-linear-to-r from-cyan-500/6 via-indigo-500/6 to-fuchsia-500/6 dark:from-cyan-400/15 dark:via-indigo-400/15 dark:to-fuchsia-400/12 rounded-full blur-3xl opacity-60 dark:opacity-80 mix-blend-plus-lighter" />

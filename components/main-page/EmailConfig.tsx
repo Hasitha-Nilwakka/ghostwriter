@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Button } from "../ui/button"
+import Image from "next/image";
+import { Button } from "../ui/button";
 import {
     Field,
     FieldDescription,
@@ -9,53 +9,52 @@ import {
     FieldGroup,
     FieldLabel,
     FieldLegend,
-    FieldSeparator,
     FieldSet
-} from "../ui/field"
+} from "../ui/field";
 import {
+    MdArrowBack,
     MdBlurCircular,
     MdOutlineHourglassBottom,
     MdOutlineMarkEmailRead,
     MdPlayCircleOutline,
     MdRunningWithErrors
-} from "react-icons/md"
-import { BsCompass } from "react-icons/bs"
-import { LuCircleUser, LuGhost } from "react-icons/lu"
-import TextareaWithCharacterCount from "../ui/textareaWithCount"
-import { RxAvatar } from "react-icons/rx"
-import InputCharacterLimit from "../ui/inputWithCount"
-import { ComboboxMultiple } from "../ui/comboMultiple"
-import { TbMoodSpark, TbSend2 } from "react-icons/tb"
-import { emailConfigSchema, EmailConfigSchema } from "@/schema/emailConfigSchema"
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { emailTones } from "@/data/data"
-import EmailKeyPointsPanel from "./EmailKeyPointsPanel"
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { currentStep, useCurrentStepStore } from "@/store/currentStep"
-import { useGenerateEmail } from "@/queries/generateEmailRequest"
-import { useEmailPollingStore } from "@/store/emailPolling"
-import AlertFlow from "../ui/alertFlow"
-import { useEffect } from "react"
+} from "react-icons/md";
+import { BsCompass } from "react-icons/bs";
+import { LuCircleUser, LuGhost } from "react-icons/lu";
+import TextareaWithCharacterCount from "../ui/textareaWithCount";
+import { RxAvatar } from "react-icons/rx";
+import InputCharacterLimit from "../ui/inputWithCount";
+import { ComboboxMultiple } from "../ui/comboMultiple";
+import { TbMoodSpark, TbSend2 } from "react-icons/tb";
+import { emailConfigSchema, EmailConfigSchema } from "@/schema/emailConfigSchema";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { emailTones } from "@/data/data";
+import EmailKeyPointsPanel from "./EmailKeyPointsPanel";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { currentStep, useCurrentStepStore } from "@/store/currentStep";
+import { useGenerateEmail } from "@/queries/generateEmailRequest";
+import { RiAiGenerate3dFill } from "react-icons/ri";
+import AlertFlow from "../ui/alertFlow";
+import { useEffect } from "react";
+import FillMockDataButton from "./FillMockDataButton";
+import { emailMockPresets } from "@/data/mockFormData";
 
 export default function EmailConfig() {
-    const { setCurrentStep } = useCurrentStepStore()
+    const { setCurrentStep } = useCurrentStepStore();
 
     const {
         mutate,
         isPending,
         isError,
         isSuccess
-    } = useGenerateEmail()
-
-    const {
-        status: generationStatus
-    } = useEmailPollingStore()
+    } = useGenerateEmail();
 
     const {
         register,
         control,
         handleSubmit,
+        reset,
         formState: { errors }
     } = useForm<EmailConfigSchema>({
         resolver: zodResolver(emailConfigSchema),
@@ -69,27 +68,26 @@ export default function EmailConfig() {
             urgency: "low",
             cta: ""
         }
-    })
+    });
 
-    const alertStatus = isPending ? "pending" : isSuccess ? "success" : isError ? "failed" : "idle"
+    const alertStatus = isPending ? "pending" : isSuccess ? "success" : isError ? "failed" : "idle";
 
     function submitForm(data: EmailConfigSchema) {
-        mutate(data)
+        mutate(data);
     }
 
     useEffect(() => {
         if (isSuccess) {
             const timer = setTimeout(() => {
-                setCurrentStep(currentStep.step3)
-            }, 1500)
-            return () => clearTimeout(timer)
+                setCurrentStep(currentStep.step3);
+            }, 1500);
+            return () => clearTimeout(timer);
         }
-    }, [isSuccess, setCurrentStep])
+    }, [isSuccess, setCurrentStep]);
 
     return (
-        <div className="flex flex-col lg:flex-1 w-full h-175">
-
-            {alertStatus !== 'idle' && (
+        <div className="flex flex-col lg:flex-1 w-full max-w-xl xl:max-w-2xl mx-auto lg:h-[680px] lg:max-h-[calc(100vh-140px)]">
+            {alertStatus !== "idle" && (
                 <AlertFlow
                     status={alertStatus}
                     heading={{
@@ -110,333 +108,294 @@ export default function EmailConfig() {
                 />
             )}
 
-            <FieldGroup className="flex justify-center items-center">
-                <div className="flex gap-2 justify-center items-center p-3">
-
+            <div className="shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 px-1 sm:px-2">
+                <div className="flex gap-3 items-center p-1 sm:p-2">
                     <Image
                         src="/ghost.png"
                         alt="ghost logo"
                         height={50}
                         width={50}
+                        className="size-10 sm:size-12 object-contain shrink-0"
                     />
 
                     <div>
-                        <FieldLegend className="flex items-center gap-2 dark:text-dark-text-main">
-                            Lets configure your email
+                        <FieldLegend className="flex text-lg sm:text-xl font-semibold items-center gap-2 text-light-text-main dark:text-dark-text-main transition-colors duration-200">
+                            Let&apos;s configure your email
                             <MdOutlineMarkEmailRead
-                                size={24}
-                                className="text-[#bc00dd]"
+                                size={22}
+                                className="text-[#bc00dd]/70 dark:text-[#bc00dd]/90 transition-colors duration-200 shrink-0"
                             />
                         </FieldLegend>
 
-                        <FieldDescription className="dark:text-dark-text-background">
-                            following information are required
+                        <FieldDescription className="text-xs sm:text-sm text-light-text-background dark:text-dark-text-background transition-colors duration-200">
+                            Provide the details below to generate your email
                         </FieldDescription>
                     </div>
-
                 </div>
-            </FieldGroup>
+
+                <FillMockDataButton
+                    presets={emailMockPresets}
+                    onSelectPreset={(data) => reset(data)}
+                    className="self-end sm:self-center"
+                />
+            </div>
 
             <form
-                className="w-full shadow-md inset-shadow-2xs py-3 px-3 overflow-scroll"
+                className="flex-1 min-h-0 flex flex-col w-full"
                 onSubmit={handleSubmit(submitForm)}
             >
-                <FieldSet>
-
-                    <FieldGroup>
-
-                        <Field>
-
-                            <div className="flex gap-2">
-                                <BsCompass size={18} />
-
-                                <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                    Purpose
-                                </FieldLabel>
-                            </div>
-
-                            <TextareaWithCharacterCount
-                                {...register("purpose")}
-                                placeHolder="Introducing new software"
-                                description="What is the purpose of this email"
-                                maxLength={200}
-                            />
-
-                            {errors.purpose && (
-                                <FieldError className="pl-1!">
-                                    {errors.purpose.message}
-                                </FieldError>
-                            )}
-
-                        </Field>
-
-                        <FieldGroup>
-
-                            <div className="flex gap-2 justify-center">
-
-                                <LuCircleUser size={18} />
-
-                                <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                    Receipient context
-                                </FieldLabel>
-
-                            </div>
-
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-3 px-2 sm:px-4 space-y-5">
+                    <FieldSet>
+                        <FieldGroup className="gap-5">
                             <Field>
-
-                                <div className="flex gap-2">
-
-                                    <RxAvatar size={18} />
-
-                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                        Reciever
+                                <div className="flex items-center gap-2">
+                                    <BsCompass size={18} className="text-primary/70 shrink-0" />
+                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                        Purpose
                                     </FieldLabel>
-
-                                </div>
-
-                                <InputCharacterLimit
-                                    {...register("recipient_name")}
-                                    placeholder="John doe or Boss"
-                                    maxLength={150}
-                                />
-
-                                <FieldDescription>
-                                    Who receives this email
-                                </FieldDescription>
-
-                                {errors.recipient_name && (
-                                    <FieldError className="pl-1!">
-                                        {errors.recipient_name.message}
-                                    </FieldError>
-                                )}
-
-                            </Field>
-
-                            <Field>
-
-                                <div className="flex gap-2">
-
-                                    <MdBlurCircular size={18} />
-
-                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                        Reciever background
-                                    </FieldLabel>
-
                                 </div>
 
                                 <TextareaWithCharacterCount
-                                    {...register("recipient_background")}
-                                    placeHolder="Office manager of some company"
-                                    description="Receivers background"
+                                    {...register("purpose")}
+                                    placeHolder="e.g. Introduce our new product features and schedule a demo"
+                                    description="What is the primary goal of this email?"
+                                    maxLength={200}
+                                />
+
+                                {errors.purpose && (
+                                    <FieldError className="pl-0.5">
+                                        {errors.purpose.message}
+                                    </FieldError>
+                                )}
+                            </Field>
+
+                            <div className="flex flex-col gap-4 p-3 sm:p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 dark:border-white/10 dark:bg-zinc-900/40 transition-colors duration-200">
+                                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/60 dark:border-white/10">
+                                    <LuCircleUser size={18} className="text-primary/70 shrink-0" />
+                                    <span className="text-sm font-semibold text-light-text-main dark:text-dark-text-main transition-colors duration-200">
+                                        Recipient Details
+                                    </span>
+                                </div>
+
+                                <Field>
+                                    <div className="flex items-center gap-2">
+                                        <RxAvatar size={18} className="text-muted-foreground shrink-0" />
+                                        <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                            Recipient Name / Role
+                                        </FieldLabel>
+                                    </div>
+
+                                    <InputCharacterLimit
+                                        {...register("recipient_name")}
+                                        placeholder="e.g. John Doe or Product Hiring Team"
+                                        maxLength={150}
+                                    />
+
+                                    <FieldDescription>
+                                        Who will receive and read this email?
+                                    </FieldDescription>
+
+                                    {errors.recipient_name && (
+                                        <FieldError className="pl-0.5">
+                                            {errors.recipient_name.message}
+                                        </FieldError>
+                                    )}
+                                </Field>
+
+                                <Field>
+                                    <div className="flex items-center gap-2">
+                                        <MdBlurCircular size={18} className="text-muted-foreground shrink-0" />
+                                        <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                            Recipient Background
+                                        </FieldLabel>
+                                    </div>
+
+                                    <TextareaWithCharacterCount
+                                        {...register("recipient_background")}
+                                        placeHolder="e.g. Engineering Director with 10+ years experience, focused on reducing server costs"
+                                        description="Background, interests, or context about the recipient"
+                                        maxLength={300}
+                                    />
+
+                                    {errors.recipient_background && (
+                                        <FieldError className="pl-0.5">
+                                            {errors.recipient_background.message}
+                                        </FieldError>
+                                    )}
+                                </Field>
+                            </div>
+
+                            <Controller
+                                name="key_points"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <div className="flex flex-col gap-1">
+                                        <EmailKeyPointsPanel
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+
+                                        {fieldState.error && (
+                                            <FieldError className="pl-0.5">
+                                                {fieldState.error.message}
+                                            </FieldError>
+                                        )}
+                                    </div>
+                                )}
+                            />
+
+                            <Field>
+                                <div className="flex items-center gap-2">
+                                    <TbMoodSpark size={18} className="text-primary/70 shrink-0" />
+                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                        Tone
+                                    </FieldLabel>
+                                </div>
+
+                                <Controller
+                                    name="tone"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <ComboboxMultiple
+                                            itemArray={emailTones}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            maxSelections={3}
+                                            onBlur={field.onBlur}
+                                            placeholder="Select tones (1–3)"
+                                        />
+                                    )}
+                                />
+
+                                <FieldDescription>
+                                    Choose 1 to 3 tones to guide the voice of your email
+                                </FieldDescription>
+
+                                {errors.tone && (
+                                    <FieldError className="pl-0.5">
+                                        {errors.tone.message}
+                                    </FieldError>
+                                )}
+                            </Field>
+
+                            <Field>
+                                <div className="flex items-center gap-2">
+                                    <MdOutlineHourglassBottom size={18} className="text-primary/70 shrink-0" />
+                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                        Urgency
+                                    </FieldLabel>
+                                </div>
+
+                                <Controller
+                                    name="urgency"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <RadioGroup
+                                            value={field.value}
+                                            onValueChange={field.onChange}
+                                            ref={field.ref}
+                                            name={field.name}
+                                            defaultValue="low"
+                                            className="flex items-center gap-6 sm:gap-8 pt-1"
+                                        >
+                                            <div className="flex items-center gap-2 cursor-pointer">
+                                                <RadioGroupItem
+                                                    value="low"
+                                                    id="urgency-low"
+                                                />
+                                                <label
+                                                    htmlFor="urgency-low"
+                                                    className="text-sm font-medium text-light-text-main dark:text-dark-text-main cursor-pointer select-none transition-colors duration-200"
+                                                >
+                                                    Low
+                                                </label>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 cursor-pointer">
+                                                <RadioGroupItem
+                                                    value="normal"
+                                                    id="urgency-normal"
+                                                />
+                                                <label
+                                                    htmlFor="urgency-normal"
+                                                    className="text-sm font-medium text-light-text-main dark:text-dark-text-main cursor-pointer select-none transition-colors duration-200"
+                                                >
+                                                    Normal
+                                                </label>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 cursor-pointer">
+                                                <RadioGroupItem
+                                                    value="high"
+                                                    id="urgency-high"
+                                                />
+                                                <label
+                                                    htmlFor="urgency-high"
+                                                    className="text-sm font-medium text-light-text-main dark:text-dark-text-main cursor-pointer select-none transition-colors duration-200"
+                                                >
+                                                    High
+                                                </label>
+                                            </div>
+                                        </RadioGroup>
+                                    )}
+                                />
+
+                                <FieldDescription>
+                                    Set how urgent the message should feel
+                                </FieldDescription>
+                            </Field>
+
+                            <Field>
+                                <div className="flex items-center gap-2">
+                                    <MdPlayCircleOutline size={18} className="text-primary/70 shrink-0" />
+                                    <FieldLabel className="text-light-text-main dark:text-dark-text-main font-medium">
+                                        Call to Action (CTA)
+                                    </FieldLabel>
+                                </div>
+
+                                <InputCharacterLimit
+                                    {...register("cta")}
+                                    placeholder="e.g. Schedule a 15-minute intro call this week"
                                     maxLength={300}
                                 />
 
-                                {errors.recipient_background && (
-                                    <FieldError className="pl-1!">
-                                        {errors.recipient_background.message}
+                                <FieldDescription>
+                                    What specific action should the recipient take?
+                                </FieldDescription>
+
+                                {errors.cta && (
+                                    <FieldError className="pl-0.5">
+                                        {errors.cta.message}
                                     </FieldError>
                                 )}
-
                             </Field>
-
                         </FieldGroup>
+                    </FieldSet>
+                </div>
 
-                        <Controller
-                            name="key_points"
-                            control={control}
-                            render={({ field, fieldState }) => (
-                                <div className="flex flex-col gap-1">
-
-                                    <EmailKeyPointsPanel
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                    />
-
-                                    {fieldState.error && (
-                                        <FieldError className="pl-1!">
-                                            {fieldState.error.message}
-                                        </FieldError>
-                                    )}
-
-                                </div>
-                            )}
-                        />
-
-                        <Field>
-
-                            <div className="flex gap-2">
-
-                                <TbMoodSpark size={18} />
-
-                                <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                    Tone
-                                </FieldLabel>
-
-                            </div>
-
-                            <Controller
-                                name="tone"
-                                control={control}
-                                render={({ field }) => (
-                                    <ComboboxMultiple
-                                        itemArray={emailTones}
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        maxSelections={3}
-                                        onBlur={field.onBlur}
-                                        placeholder="Select tones"
-                                    />
-                                )}
-                            />
-
-                            <FieldDescription>
-                                Set the tone for the email (1 - 3)
-                            </FieldDescription>
-
-                            {errors.tone && (
-                                <FieldError className="pl-1!">
-                                    {errors.tone.message}
-                                </FieldError>
-                            )}
-
-                        </Field>
-
-                        <Field>
-
-                            <div className="flex gap-2">
-
-                                <MdOutlineHourglassBottom size={18} />
-
-                                <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                    Urgency
-                                </FieldLabel>
-
-                            </div>
-
-                            <Controller
-                                name="urgency"
-                                control={control}
-                                render={({ field }) => (
-                                    <RadioGroup
-                                        value={field.value}
-                                        onValueChange={field.onChange}
-                                        ref={field.ref}
-                                        name={field.name}
-                                        defaultValue="low"
-                                        className="flex"
-                                    >
-
-                                        <Field orientation="horizontal">
-                                            <RadioGroupItem
-                                                value="low"
-                                                id="low"
-                                            />
-
-                                            <FieldLabel
-                                                htmlFor="low"
-                                                className="font-normal"
-                                            >
-                                                Low
-                                            </FieldLabel>
-                                        </Field>
-
-                                        <Field orientation="horizontal">
-                                            <RadioGroupItem
-                                                value="normal"
-                                                id="normal"
-                                            />
-
-                                            <FieldLabel
-                                                htmlFor="normal"
-                                                className="font-normal"
-                                            >
-                                                Normal
-                                            </FieldLabel>
-                                        </Field>
-
-                                        <Field orientation="horizontal">
-                                            <RadioGroupItem
-                                                value="high"
-                                                id="high"
-                                            />
-
-                                            <FieldLabel
-                                                htmlFor="high"
-                                                className="font-normal"
-                                            >
-                                                High
-                                            </FieldLabel>
-                                        </Field>
-
-                                    </RadioGroup>
-                                )}
-                            />
-
-                        </Field>
-
-                        <Field>
-
-                            <div className="flex gap-2">
-
-                                <MdPlayCircleOutline size={18} />
-
-                                <FieldLabel className="text-light-text-main dark:text-dark-text-main">
-                                    CTA
-                                </FieldLabel>
-
-                            </div>
-
-                            <InputCharacterLimit
-                                {...register("cta")}
-                                placeholder="Shedule a meeting"
-                                maxLength={300}
-                            />
-
-                            <FieldDescription>
-                                Call to action
-                            </FieldDescription>
-
-                            {errors.cta && (
-                                <FieldError className="pl-1!">
-                                    {errors.cta.message}
-                                </FieldError>
-                            )}
-
-                        </Field>
-
-                    </FieldGroup>
-
-                </FieldSet>
-
-                <Field className="py-2">
-                    <FieldSeparator />
-                </Field>
-
-                <Field className="flex! flex-row! w-fit! justify-between items-center">
-
+                <div className="shrink-0 flex items-center justify-between w-full pt-4 pb-1 px-2 sm:px-4 mt-2 border-t border-slate-200/80 dark:border-white/10">
                     <Button
                         type="button"
                         variant="outline"
-                        className="w-fit!"
+                        className="w-auto! shrink-0 flex items-center gap-2 cursor-pointer h-10 px-4 text-sm font-medium transition-colors duration-200"
                         onClick={() => setCurrentStep(currentStep.step1)}
-                        disabled={isPending}
+                        disabled={isPending || isSuccess}
                     >
+                        <MdArrowBack size={18} />
                         Back
                     </Button>
 
                     <Button
                         type="submit"
                         variant="default"
-                        className="w-fit!"
-                        disabled={isPending}
+                        className="w-auto! shrink-0 flex items-center gap-2 cursor-pointer h-10 px-5 text-sm font-medium transition-colors duration-200 shadow-sm"
+                        disabled={isPending || isSuccess}
                     >
+                        <RiAiGenerate3dFill size={18} />
                         Generate
                     </Button>
-
-                </Field>
-
+                </div>
             </form>
-
         </div>
-    )
+    );
 }

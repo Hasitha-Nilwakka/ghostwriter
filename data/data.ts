@@ -55,3 +55,71 @@ export const socialMediaTones = [
   "Promotional",
   "Sales-Oriented"
 ];
+
+export const storyGenres = [
+  "Adventure",
+  "Fantasy",
+  "Sci-Fi",
+  "Cyberpunk",
+  "Mystery",
+  "Thriller",
+  "Psychological Thriller",
+  "Horror",
+  "Gothic Horror",
+  "Romance",
+  "Historical Fiction",
+  "Dystopian",
+  "Post-Apocalyptic",
+  "Supernatural",
+  "Urban Fantasy",
+  "Crime & Detective",
+  "Mythological",
+  "Comedy",
+  "Drama",
+  "Slice of Life"
+];
+
+export const storyMoods = [
+  "Mysterious",
+  "Hopeful",
+  "Dark & Gritty",
+  "Whimsical",
+  "Suspenseful",
+  "Melancholic",
+  "Uplifting",
+  "Humorous",
+  "Tense",
+  "Eerie",
+  "Lighthearted",
+  "Nostalgic",
+  "Somber",
+  "Epic",
+  "Dreamy",
+  "Bittersweet",
+  "Cozy",
+  "Adventurous"
+];
+
+export const storyStyles = [
+  "Atmospheric & Immersive",
+  "Descriptive & Vivid",
+  "Fast-paced & Action-driven",
+  "Poetic & Lyrical",
+  "Minimalist & Direct",
+  "Noir & Gritty",
+  "Humorous & Satirical",
+  "Philosophical & Reflective",
+  "Cinematic",
+  "Gothic & Haunting",
+  "Fable & Allegorical",
+  "Conversational"
+];
+
+export const storyAudiences = [
+  "Children (8-12)",
+  "Young Adults (13-18)",
+  "New Adults (18-25)",
+  "Adults",
+  "General Audience",
+  "All Ages"
+];

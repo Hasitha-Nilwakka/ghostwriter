@@ -7,47 +7,45 @@ export default function Home() {
   return (
     <div 
       className="
-        px-5
+        min-h-screen flex flex-col
+        px-3 sm:px-6
         bg-bg-light dark:bg-black 
-        transition-all duration-300 
-        mb-5
-        h-screen
-
+        transition-colors duration-200 
         lg:bg-linear-to-r/increasing lg:from-indigo-500 lg:to-teal-400 
-        lg:p-1"
+        lg:p-2"
     >
-      {/**Ghostwriter text and theme button */}
       <div 
         className="
         bg-bg-light 
         dark:bg-black
-        h-full
-        transition-all duration-300
+        flex-1 flex flex-col
+        transition-colors duration-200
         relative isolate
-
-        lg:p-5 lg:rounded-2xl"
+        p-3 sm:p-5
+        lg:p-6 lg:rounded-2xl"
       >
         <AbstractOuter/>
-        <div className="flex justify-between items-center py-10 lg:px-10 lg:pt-5 lg:pb-10">
-          <div className="flex items-end">
+        <div className="flex justify-between items-center py-4 sm:py-6 lg:px-6 lg:pt-3 lg:pb-6">
+          <div className="flex items-end gap-1.5 sm:gap-2">
             <Image
-              className="hidden lg:block transition-all duration-300"
+              className="size-8 sm:size-10 lg:size-14 object-contain shrink-0"
               src={'/ghost.png'}
-              alt="text ghostwritter"
-              width={75}
-              height={75}
-              />
+              alt="ghost icon"
+              width={60}
+              height={60}
+            />
             <Image
               src={'/text.png'}
-              alt="text ghostwritter"
-              width={150}
-              height={75}
+              alt="text ghostwriter"
+              width={140}
+              height={70}
+              className="w-28 sm:w-36 lg:w-[140px] h-auto object-contain"
             />
           </div>
           <ThemeToggle/>
         </div>
-        <div className="min-h-full">
-        <MainPage/>
+        <div className="flex-1 flex flex-col min-h-0 w-full">
+          <MainPage/>
         </div>
       </div>
     </div>

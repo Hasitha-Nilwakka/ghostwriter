@@ -534,7 +534,7 @@ function ToastCard({
         item.custom
           ? "overflow-visible"
           : "flex items-start gap-3 overflow-hidden rounded-2xl border p-4 shadow-lg transition-colors",
-        typeStyles[item.type], // 👈 Dynamically inject colorful background and text styles
+        typeStyles[item.type],
         item.className
       )}
     >
@@ -638,14 +638,16 @@ function ToastGroup({
 
   const ordered = [...items].reverse()
 
+  const offsets: number[] = []
   let cumulative = 0
-  const offsets = ordered.map((item, index) => {
+  for (let index = 0; index < ordered.length; index++) {
+    const item = ordered[index]
     const y = expanded
       ? cumulative
       : Math.min(index, MAX_VISIBLE_TOASTS - 1) * COLLAPSED_PEEK
+    offsets.push(y)
     cumulative += (heights[item.id] ?? 0) + gap
-    return y
-  })
+  }
   const frontHeight = heights[ordered[0]?.id ?? ""] ?? 0
   const expandedHeight = cumulative > 0 ? cumulative - gap : 0
 
@@ -698,7 +700,11 @@ function Toaster({
   className,
   autoMount = false,
 }: ToasterProps) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
   const toasts = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -706,7 +712,6 @@ function Toaster({
   )
 
   useEffect(() => {
-    setMounted(true)
     registeredToasters += 1
     defaultOptions = { position, duration, closeButton, dismissible, ...toastOptions }
 

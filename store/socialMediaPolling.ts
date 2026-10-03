@@ -27,6 +27,8 @@ interface SocialMediaPollingStore {
     reset: () => void
 }
 
+let currentSocialPollId = 0
+
 export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) => ({
     request: null,
     jobId: null,
@@ -70,7 +72,8 @@ export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) 
             status: "failed"
         }),
 
-    reset: () =>
+    reset: () => {
+        currentSocialPollId++
         set({
             request: null,
             jobId: null,
@@ -79,6 +82,7 @@ export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) 
             result: null,
             error: null
         })
+    }
 }))
 
 export async function poll() {
@@ -89,7 +93,7 @@ export async function poll() {
     } = useSocialMediaPollingStore.getState()
 
     if (!jobId) {
-        throw new Error("No job ID available")
+        return null
     }
 
     const response = await axios.post(
@@ -127,26 +131,43 @@ async function submitRetry(
 }
 
 export async function startPolling() {
+    const pollId = ++currentSocialPollId
     const pollIntervalMs = 2000
-    const maxAttempts = 100
+    const maxAttempts = 150
+    let consecutiveErrors = 0
 
     for (let i = 0; i < maxAttempts; i++) {
         await new Promise((resolve) =>
             setTimeout(resolve, pollIntervalMs)
         )
 
+        // Cancel if a newer polling loop was launched
+        if (pollId !== currentSocialPollId) return
+
+        const currentState = useSocialMediaPollingStore.getState()
+        // If already completed or reset, exit immediately
+        if (currentState.status === "completed") return
+        if (!currentState.jobId || currentState.status === "idle") return
+
         try {
             const data = await poll()
 
-            if (!data) {
-                useSocialMediaPollingStore
-                    .getState()
-                    .setError(
-                        "No response received while polling"
-                    )
+            if (pollId !== currentSocialPollId) return
 
-                return
+            if (!data) {
+                consecutiveErrors++
+                if (consecutiveErrors >= 5) {
+                    useSocialMediaPollingStore
+                        .getState()
+                        .setError(
+                            "No response received while polling"
+                        )
+                    return
+                }
+                continue
             }
+
+            consecutiveErrors = 0
 
             const terminalFailure = [
                 "FAILED",
@@ -155,16 +176,24 @@ export async function startPolling() {
             ].includes(data.status)
 
             if (terminalFailure) {
+                if (pollId !== currentSocialPollId) return
+                const message =
+                    data.status === "TIMED_OUT"
+                        ? "The generation request timed out while waiting for the AI service. Please try again."
+                        : data.status === "CANCELLED"
+                        ? "The generation request was cancelled. Please try again."
+                        : "The AI service was unable to complete your social post request. Please try again."
+
                 useSocialMediaPollingStore
                     .getState()
-                    .setError(
-                        `Job ended with status: ${data.status}`
-                    )
+                    .setError(message)
 
                 return
             }
 
             if (data.status === "COMPLETED") {
+                if (pollId !== currentSocialPollId) return
+
                 if (
                     data.canRetry &&
                     data.quality?.issues?.length
@@ -172,6 +201,8 @@ export async function startPolling() {
                     const retryJob = await submitRetry(
                         data.quality.issues
                     )
+
+                    if (pollId !== currentSocialPollId) return
 
                     if (!retryJob) {
                         useSocialMediaPollingStore
@@ -189,6 +220,8 @@ export async function startPolling() {
                         status: "polling"
                     })
 
+                    // Reset counter for the retry job so it gets its own full timeout window
+                    i = 0
                     continue
                 }
 
@@ -199,24 +232,32 @@ export async function startPolling() {
                 return
             }
         } catch (error) {
+            if (pollId !== currentSocialPollId) return
+            if (useSocialMediaPollingStore.getState().status === "completed") return
+
+            consecutiveErrors++
             console.error(
-                "Polling error:",
+                `Social media polling error (attempt ${consecutiveErrors}/5):`,
                 error
             )
 
-            useSocialMediaPollingStore
-                .getState()
-                .setError(
-                    "An error occurred while checking the generated social media post"
-                )
-
-            return
+            if (consecutiveErrors >= 5) {
+                useSocialMediaPollingStore
+                    .getState()
+                    .setError(
+                        "An error occurred while checking the generated social media post"
+                    )
+                return
+            }
         }
     }
+
+    if (pollId !== currentSocialPollId) return
+    if (useSocialMediaPollingStore.getState().status === "completed") return
 
     useSocialMediaPollingStore
         .getState()
         .setError(
-            "Polling timed out"
+            "The generation request timed out. Please try again."
         )
 }

@@ -135,12 +135,30 @@ export async function POST(
   } catch (error) {
     console.error("Invalid model output:", error);
 
+    if (attempt === 0) {
+      return Response.json({
+        ...jobDetails,
+        result: null,
+        quality: {
+          valid: false,
+          issues: [
+            {
+              code: "INAPPROPRIATE_CONTENT_DETECTED",
+              message: "The model returned an invalid generation format.",
+            },
+          ],
+          metrics: {},
+        },
+        canRetry: true,
+      });
+    }
+
     return Response.json(
       {
         ...jobDetails,
         result: null,
         quality: null,
-        canRetry: attempt === 0,
+        canRetry: false,
         error: {
           code: "INVALID_MODEL_OUTPUT",
           message:

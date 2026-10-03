@@ -27,6 +27,8 @@ interface EmailPollingStore {
     reset: () => void
 }
 
+let currentEmailPollId = 0
+
 export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
     request: null,
     jobId: null,
@@ -70,7 +72,8 @@ export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
             status: "failed"
         }),
 
-    reset: () =>
+    reset: () => {
+        currentEmailPollId++
         set({
             request: null,
             jobId: null,
@@ -79,6 +82,7 @@ export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
             result: null,
             error: null
         })
+    }
 }))
 
 
@@ -90,7 +94,7 @@ export async function poll() {
     } = useEmailPollingStore.getState()
 
     if (!jobId) {
-        throw new Error("No job ID available")
+        return null
     }
 
     const response = await axios.post(
@@ -130,27 +134,43 @@ async function submitRetry(
 
 
 export async function startPolling() {
+    const pollId = ++currentEmailPollId
     const pollIntervalMs = 2000
-    const maxAttempts = 100
+    const maxAttempts = 150
+    let consecutiveErrors = 0
 
     for (let i = 0; i < maxAttempts; i++) {
-
         await new Promise(resolve =>
             setTimeout(resolve, pollIntervalMs)
         )
 
+        // Cancel if a newer polling loop was launched
+        if (pollId !== currentEmailPollId) return
+
+        const currentState = useEmailPollingStore.getState()
+        // If already completed or reset, exit immediately
+        if (currentState.status === "completed") return
+        if (!currentState.jobId || currentState.status === "idle") return
+
         try {
             const data = await poll()
 
-            if (!data) {
-                useEmailPollingStore
-                    .getState()
-                    .setError(
-                        "No response received while polling"
-                    )
+            if (pollId !== currentEmailPollId) return
 
-                return
+            if (!data) {
+                consecutiveErrors++
+                if (consecutiveErrors >= 5) {
+                    useEmailPollingStore
+                        .getState()
+                        .setError(
+                            "No response received while polling"
+                        )
+                    return
+                }
+                continue
             }
+
+            consecutiveErrors = 0
 
             const terminalFailure = [
                 "FAILED",
@@ -159,16 +179,23 @@ export async function startPolling() {
             ].includes(data.status)
 
             if (terminalFailure) {
+                if (pollId !== currentEmailPollId) return
+                const message =
+                    data.status === "TIMED_OUT"
+                        ? "The generation request timed out while waiting for the AI service. Please try again."
+                        : data.status === "CANCELLED"
+                        ? "The generation request was cancelled. Please try again."
+                        : "The AI service was unable to complete your email request. Please try again."
+
                 useEmailPollingStore
                     .getState()
-                    .setError(
-                        `Job ended with status: ${data.status}`
-                    )
+                    .setError(message)
 
                 return
             }
 
             if (data.status === "COMPLETED") {
+                if (pollId !== currentEmailPollId) return
 
                 if (
                     data.canRetry &&
@@ -177,6 +204,8 @@ export async function startPolling() {
                     const retryJob = await submitRetry(
                         data.quality.issues
                     )
+
+                    if (pollId !== currentEmailPollId) return
 
                     if (!retryJob) {
                         useEmailPollingStore
@@ -194,6 +223,8 @@ export async function startPolling() {
                         status: "polling"
                     })
 
+                    // Reset counter for the retry job so it gets its own full timeout window
+                    i = 0
                     continue
                 }
 
@@ -205,24 +236,32 @@ export async function startPolling() {
             }
 
         } catch (error) {
+            if (pollId !== currentEmailPollId) return
+            if (useEmailPollingStore.getState().status === "completed") return
+
+            consecutiveErrors++
             console.error(
-                "Polling error:",
+                `Email polling error (attempt ${consecutiveErrors}/5):`,
                 error
             )
 
-            useEmailPollingStore
-                .getState()
-                .setError(
-                    "An error occurred while checking the generated email"
-                )
-
-            return
+            if (consecutiveErrors >= 5) {
+                useEmailPollingStore
+                    .getState()
+                    .setError(
+                        "An error occurred while checking the generated email"
+                    )
+                return
+            }
         }
     }
+
+    if (pollId !== currentEmailPollId) return
+    if (useEmailPollingStore.getState().status === "completed") return
 
     useEmailPollingStore
         .getState()
         .setError(
-            "Polling timed out"
+            "The generation request timed out. Please try again."
         )
 }

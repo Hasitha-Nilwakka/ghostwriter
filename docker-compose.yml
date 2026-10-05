@@ -9,10 +9,10 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-      - RUNPOD_API_KEY=${RUNPOD_API_KEY:-}
-      - RUNPOD_ENDPOINT_ID=${RUNPOD_ENDPOINT_ID:-}
     env_file:
-      - path: .env.local
+      - path: .env.example
         required: false
       - path: .env
+        required: false
+      - path: .env.local
         required: false

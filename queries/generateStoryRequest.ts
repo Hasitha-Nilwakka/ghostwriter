@@ -42,9 +42,10 @@ export const useGenerateStory = () => {
         },
         onError: (error) => {
             console.error("Story generation request failed:", error)
-            useStoryPollingStore.getState().setError(
-                "Unable to start the generation job. Please check your network connection and try again."
-            )
+            const serverMessage = axios.isAxiosError(error) && error.response?.data?.error?.message
+                ? error.response.data.error.message
+                : "Unable to start the generation job. Please check your network connection and try again."
+            useStoryPollingStore.getState().setError(serverMessage)
         }
     })
 }

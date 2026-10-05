@@ -36,9 +36,10 @@ export const useGenerateSocial = () => {
         },
         onError: (error) => {
             console.error("Social media generation request failed:", error)
-            useSocialMediaPollingStore.getState().setError(
-                "Unable to start the generation job. Please check your network connection and try again."
-            )
+            const serverMessage = axios.isAxiosError(error) && error.response?.data?.error?.message
+                ? error.response.data.error.message
+                : "Unable to start the generation job. Please check your network connection and try again."
+            useSocialMediaPollingStore.getState().setError(serverMessage)
         }
     })
 }

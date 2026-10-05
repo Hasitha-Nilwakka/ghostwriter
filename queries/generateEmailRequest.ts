@@ -52,9 +52,10 @@ export const useGenerateEmail = () => {
 
         onError: (error) => {
             console.error("Email generation request failed:", error)
-            useEmailPollingStore.getState().setError(
-                "Unable to start the generation job. Please check your network connection and try again."
-            )
+            const serverMessage = axios.isAxiosError(error) && error.response?.data?.error?.message
+                ? error.response.data.error.message
+                : "Unable to start the generation job. Please check your network connection and try again."
+            useEmailPollingStore.getState().setError(serverMessage)
         }
     })
 }

@@ -1,5 +1,6 @@
 import { GenerateRequest } from "@/schema/contentTypeSchema"
 import { SocialMediaOutput } from "@/schema/generatedContentSchema"
+import { SocialMediaConfigSchema } from "@/schema/socialConfigSchema"
 import axios from "axios"
 import { create } from "zustand"
 
@@ -11,6 +12,7 @@ type JobStatus =
     | "completed"
 
 interface SocialMediaPollingStore {
+    formData: SocialMediaConfigSchema | null
     request: GenerateRequest | null
     jobId: string | null
     status: JobStatus
@@ -18,6 +20,7 @@ interface SocialMediaPollingStore {
     result: SocialMediaOutput | null
     error: string | null
 
+    setFormData: (formData: SocialMediaConfigSchema | null) => void
     setRequest: (request: GenerateRequest) => void
     startJob: (jobId: string) => void
     setAttempt: (attempt: 0 | 1) => void
@@ -30,6 +33,7 @@ interface SocialMediaPollingStore {
 let currentSocialPollId = 0
 
 export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) => ({
+    formData: null,
     request: null,
     jobId: null,
     status: "idle",
@@ -37,9 +41,16 @@ export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) 
     result: null,
     error: null,
 
+    setFormData: (formData) =>
+        set({
+            formData
+        }),
+
     setRequest: (request) =>
         set({
             request,
+            result: null,
+            error: null,
             status: "submitting"
         }),
 
@@ -75,6 +86,7 @@ export const useSocialMediaPollingStore = create<SocialMediaPollingStore>((set) 
     reset: () => {
         currentSocialPollId++
         set({
+            formData: null,
             request: null,
             jobId: null,
             status: "idle",

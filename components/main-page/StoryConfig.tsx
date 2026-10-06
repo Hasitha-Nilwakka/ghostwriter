@@ -39,6 +39,7 @@ import {
 } from "@/data/data";
 import StoryCharactersPanel from "./StoryCharactersPanel";
 import { currentStep, useCurrentStepStore } from "@/store/currentStep";
+import { useStoryPollingStore } from "@/store/storyPolling";
 import { useGenerateStory } from "@/queries/generateStoryRequest";
 import AlertFlow from "../ui/alertFlow";
 import { useEffect } from "react";
@@ -50,7 +51,18 @@ const WORD_COUNT_PRESETS = [300, 400, 600, 800, 1000];
 
 export default function StoryConfig() {
     const { setCurrentStep } = useCurrentStepStore();
+    const { formData, setFormData } = useStoryPollingStore();
     const { mutate, isPending, isSuccess, isError } = useGenerateStory();
+
+    const initialValues: StoryConfigSchema = formData ?? {
+        genre: [],
+        characters: [],
+        setting: "",
+        length_words: 400,
+        style: [],
+        target_audience: [],
+        mood: []
+    };
 
     const {
         register,
@@ -58,25 +70,25 @@ export default function StoryConfig() {
         handleSubmit,
         setValue,
         reset,
+        getValues,
         formState: { errors }
     } = useForm<StoryConfigSchema>({
         resolver: zodResolver(storyConfigSchema),
         mode: "onTouched",
-        defaultValues: {
-            genre: [],
-            characters: [],
-            setting: "",
-            length_words: 400,
-            style: [],
-            target_audience: [],
-            mood: []
-        }
+        defaultValues: initialValues
     });
+
+    useEffect(() => {
+        if (formData) {
+            reset(formData);
+        }
+    }, [formData, reset]);
 
     const currentWordCount = useWatch({ control, name: "length_words" });
     const alertStatus = isPending ? "pending" : isSuccess ? "success" : isError ? "failed" : "idle";
 
     function submitForm(data: StoryConfigSchema) {
+        setFormData(data);
         mutate(data);
     }
 
@@ -139,7 +151,10 @@ export default function StoryConfig() {
 
                 <FillMockDataButton
                     presets={storyMockPresets}
-                    onSelectPreset={(data) => reset(data)}
+                    onSelectPreset={(data) => {
+                        setFormData(data);
+                        reset(data);
+                    }}
                     className="self-end sm:self-center"
                 />
             </div>
@@ -189,11 +204,17 @@ export default function StoryConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <TextareaWithCharacterCount
-                                    {...register("setting")}
-                                    placeHolder="e.g. An abandoned lighthouse perched on a fog-drenched island in 1924"
-                                    description="Where and when does the story take place?"
-                                    maxLength={300}
+                                <Controller
+                                    name="setting"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <TextareaWithCharacterCount
+                                            {...field}
+                                            placeHolder="e.g. An abandoned lighthouse perched on a fog-drenched island in 1924"
+                                            description="Where and when does the story take place?"
+                                            maxLength={300}
+                                        />
+                                    )}
                                 />
 
                                 {errors.setting && (
@@ -370,7 +391,10 @@ export default function StoryConfig() {
                         type="button"
                         variant="outline"
                         className="w-auto! shrink-0 flex items-center gap-2 cursor-pointer h-10 px-4 text-sm font-medium transition-colors duration-200"
-                        onClick={() => setCurrentStep(currentStep.step1)}
+                        onClick={() => {
+                            setFormData(getValues());
+                            setCurrentStep(currentStep.step1);
+                        }}
                         disabled={isPending || isSuccess}
                     >
                         <MdArrowBack size={18} />

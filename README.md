@@ -29,7 +29,7 @@
 
 Ghostwriter was built to address the friction of repetitive drafting and formatting. Unlike generic chat interfaces, Ghostwriter treats generation as a **deterministic content pipeline**:
 1. It validates and normalizes raw user inputs into structured schemas.
-2. It executes content-specific zero-shot prompt templates optimized for strict JSON output.
+2. It executes content-specific zero-shot prompt templates enforcing clear Markdown headers and section boundaries.
 3. It validates outputs against strict word-count tolerance ranges ($\pm 10\%$), character bounds, and required elements.
 4. It programmatically sanitizes AI artifacts and rogue formatting.
 5. It empowers users to preview, edit in-place, and export the final copy into **Plain Text (`.txt`)**, **Markdown (`.md`)**, **HTML (`.html`)**, or **PDF (`.pdf`)**.
@@ -51,7 +51,7 @@ Ghostwriter leverages a modern, full-stack TypeScript architecture designed for 
 | **State Management** | **Zustand 5** | Lightweight client stores for step transitions and asynchronous generation polling jobs. |
 | **Data Fetching** | **TanStack React Query 5**, **Axios** | Mutation lifecycles, HTTP client requests, and automated status polling. |
 | **AI Inference** | **RunPod Serverless AI** (vLLM Endpoint) | High-throughput GPU inference delivering sub-60-second generation times. |
-| **Prompt Engineering** | Custom Template Engine (`lib/ghostwriter/prompts.ts`) | Content-type specific prompt templates with parameter injection and JSON schema enforcement. |
+| **Prompt Engineering & Parsing** | Custom Template & Structure Engine (`lib/ghostwriter/prompts.ts`, `lib/ghostwriter/structureParser.ts`) | Content-type specific prompt templates with Markdown header enforcement and section boundary parsing. |
 | **Quality & QA** | Custom Validation Layer (`lib/ghostwriter/qualityValidation.ts`) | Automated $\pm 10\%$ word-count tolerance verification and feedback-augmented retry loop. |
 | **Sanitization Engine** | Custom Sanitizer (`lib/ghostwriter/sanitize.ts`) | Programmatic removal of conversational AI preambles and line-break normalization. |
 | **Multi-Format Export** | Custom Native Exporter (`lib/export/exportContent.ts`) | Client-side export to Plain Text (`.txt`), Markdown (`.md`), HTML (`.html`), and standard PDF 1.4 (`.pdf`). |

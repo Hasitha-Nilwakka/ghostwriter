@@ -5,10 +5,11 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 
 export const useGenerateSocial = () => {
-    const { setRequest, startJob } = useSocialMediaPollingStore()
+    const { setRequest, startJob, setFormData } = useSocialMediaPollingStore()
 
     return useMutation({
         mutationFn: async (data: SocialMediaConfigSchema) => {
+            setFormData(data)
             const requestData: GenerateRequest = {
                 content_type: 'social_media',
                 parameters: {

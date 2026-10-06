@@ -33,6 +33,7 @@ import { emailTones } from "@/data/data";
 import EmailKeyPointsPanel from "./EmailKeyPointsPanel";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { currentStep, useCurrentStepStore } from "@/store/currentStep";
+import { useEmailPollingStore } from "@/store/emailPolling";
 import { useGenerateEmail } from "@/queries/generateEmailRequest";
 import { RiAiGenerate3dFill } from "react-icons/ri";
 import AlertFlow from "../ui/alertFlow";
@@ -42,6 +43,7 @@ import { emailMockPresets } from "@/data/mockFormData";
 
 export default function EmailConfig() {
     const { setCurrentStep } = useCurrentStepStore();
+    const { formData, setFormData } = useEmailPollingStore();
 
     const {
         mutate,
@@ -50,29 +52,38 @@ export default function EmailConfig() {
         isSuccess
     } = useGenerateEmail();
 
+    const initialValues: EmailConfigSchema = formData ?? {
+        purpose: "",
+        recipient_name: "",
+        recipient_background: "",
+        key_points: [],
+        tone: [],
+        urgency: "low",
+        cta: ""
+    };
+
     const {
-        register,
         control,
         handleSubmit,
         reset,
+        getValues,
         formState: { errors }
     } = useForm<EmailConfigSchema>({
         resolver: zodResolver(emailConfigSchema),
         mode: "onTouched",
-        defaultValues: {
-            purpose: "",
-            recipient_name: "",
-            recipient_background: "",
-            key_points: [],
-            tone: [],
-            urgency: "low",
-            cta: ""
-        }
+        defaultValues: initialValues
     });
+
+    useEffect(() => {
+        if (formData) {
+            reset(formData);
+        }
+    }, [formData, reset]);
 
     const alertStatus = isPending ? "pending" : isSuccess ? "success" : isError ? "failed" : "idle";
 
     function submitForm(data: EmailConfigSchema) {
+        setFormData(data);
         mutate(data);
     }
 
@@ -135,7 +146,10 @@ export default function EmailConfig() {
 
                 <FillMockDataButton
                     presets={emailMockPresets}
-                    onSelectPreset={(data) => reset(data)}
+                    onSelectPreset={(data) => {
+                        setFormData(data);
+                        reset(data);
+                    }}
                     className="self-end sm:self-center"
                 />
             </div>
@@ -155,11 +169,17 @@ export default function EmailConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <TextareaWithCharacterCount
-                                    {...register("purpose")}
-                                    placeHolder="e.g. Introduce our new product features and schedule a demo"
-                                    description="What is the primary goal of this email?"
-                                    maxLength={200}
+                                <Controller
+                                    name="purpose"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <TextareaWithCharacterCount
+                                            {...field}
+                                            placeHolder="e.g. Introduce our new product features and schedule a demo"
+                                            description="What is the primary goal of this email?"
+                                            maxLength={200}
+                                        />
+                                    )}
                                 />
 
                                 {errors.purpose && (
@@ -185,10 +205,16 @@ export default function EmailConfig() {
                                         </FieldLabel>
                                     </div>
 
-                                    <InputCharacterLimit
-                                        {...register("recipient_name")}
-                                        placeholder="e.g. John Doe or Product Hiring Team"
-                                        maxLength={150}
+                                    <Controller
+                                        name="recipient_name"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <InputCharacterLimit
+                                                {...field}
+                                                placeholder="e.g. John Doe or Product Hiring Team"
+                                                maxLength={150}
+                                            />
+                                        )}
                                     />
 
                                     <FieldDescription>
@@ -210,11 +236,17 @@ export default function EmailConfig() {
                                         </FieldLabel>
                                     </div>
 
-                                    <TextareaWithCharacterCount
-                                        {...register("recipient_background")}
-                                        placeHolder="e.g. Engineering Director with 10+ years experience, focused on reducing server costs"
-                                        description="Background, interests, or context about the recipient"
-                                        maxLength={300}
+                                    <Controller
+                                        name="recipient_background"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <TextareaWithCharacterCount
+                                                {...field}
+                                                placeHolder="e.g. Engineering Director with 10+ years experience, focused on reducing server costs"
+                                                description="Background, interests, or context about the recipient"
+                                                maxLength={300}
+                                            />
+                                        )}
                                     />
 
                                     {errors.recipient_background && (
@@ -353,10 +385,16 @@ export default function EmailConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <InputCharacterLimit
-                                    {...register("cta")}
-                                    placeholder="e.g. Schedule a 15-minute intro call this week"
-                                    maxLength={300}
+                                <Controller
+                                    name="cta"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <InputCharacterLimit
+                                            {...field}
+                                            placeholder="e.g. Schedule a 15-minute intro call this week"
+                                            maxLength={300}
+                                        />
+                                    )}
                                 />
 
                                 <FieldDescription>
@@ -378,7 +416,10 @@ export default function EmailConfig() {
                         type="button"
                         variant="outline"
                         className="w-auto! shrink-0 flex items-center gap-2 cursor-pointer h-10 px-4 text-sm font-medium transition-colors duration-200"
-                        onClick={() => setCurrentStep(currentStep.step1)}
+                        onClick={() => {
+                            setFormData(getValues());
+                            setCurrentStep(currentStep.step1);
+                        }}
                         disabled={isPending || isSuccess}
                     >
                         <MdArrowBack size={18} />

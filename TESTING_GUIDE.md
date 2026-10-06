@@ -283,15 +283,35 @@ Click **Test Data #1** on each generator and click **Generate**. Verify each str
 > Test with generated content to verify proper parsing of markdown headers and content sections.
 
 #### How It Is Sufficed in Ghostwriter
-- [`lib/ghostwriter/generatedOutput.ts`](./lib/ghostwriter/generatedOutput.ts) uses a robust JSON extractor (`extractJsonPayload`):
-  - Strips LLM `<think>` tags.
-  - Extracts content from markdown code fences (````json ... ````).
-  - Isolates JSON bounds `{ ... }`.
-  - Cleans trailing commas.
-- When generating exports, [`lib/export/exportContent.ts`](./lib/export/exportContent.ts) parses sections into structured `ExportSection[]` with headers, metadata, and body blocks.
+
+Ghostwriter implements a complete Markdown structure parsing pipeline following the course specification (parsing titles, headers, section boundaries, and hierarchy regardless of AI model variations):
+
+1. **Markdown Header Prompting (`lib/ghostwriter/prompts.ts`)**:
+   - The AI model is instructed to format all responses with clear Markdown headings to establish explicit section boundaries:
+     - **Email**: `# Subject: <Subject Line>` (H1) for the subject, and `## Email Body` (H2) for the message body.
+     - **Social Media**: `## Post` (H2) for the copy, and `## Hashtags` (H2) for the tags.
+     - **Story**: `# <Title>` (H1) for the narrative title, and `## <Section Name>` (H2 headings like `## Introduction`, `## Narrative Development`, `## Climax & Resolution`) for the narrative progression.
+
+2. **Dedicated Markdown Structure Parser (`lib/ghostwriter/structureParser.ts`)**:
+   - **Header Identification**: Matches Markdown heading syntax (`#`, `##`, `###`, `####`) to extract headings, their depth levels (H1 > H2 > H3), and their exact line positions.
+   - **Section Boundary Detection**: Identifies the text between consecutive headings as discrete content sections, tracking start lines, end lines, section word counts, and character lengths.
+   - **Hierarchy Mapping**: Computes document-level heading hierarchy (`h1`, `h2`, `h3`, `h4`) and derives the document title from the primary H1 header.
+   - **Metadata Extraction**: Calculates total word count, character count, section count, and estimated reading time.
+   - **Content-Specific Section Mapping**:
+     - `parseEmailFromMarkdown`: Extracts the subject from `# Subject:` / H1, and the body from `## Email Body` or content sections.
+     - `parseSocialMediaFromMarkdown`: Extracts the post copy from `## Post` and parses hashtags from `## Hashtags`.
+     - `parseStoryFromMarkdown`: Extracts the story title from H1 and reconstructs the complete narrative across section boundaries (`## Introduction`, `## Climax`, etc.).
+
+3. **Hybrid Resilience (`lib/ghostwriter/generatedOutput.ts`)**:
+   - **Primary Strategy**: If output contains Markdown headers (`# Heading`), `parseGeneratedContent` parses titles, headers, and section boundaries via `structureParser.ts`.
+   - **Fallback Strategy**: If an AI model returns raw JSON, `extractJsonPayload` handles the payload, ensuring seamless operation across model variations as required by the specification.
 
 #### How to Verify
-Generate a story and an email. Confirm the Subject/Title is isolated in its own bold header, separate from the body text.
+1. Generate an email or a story in the app. Verify that the output correctly isolates the Subject/Title from the body content.
+2. Inspect [`lib/ghostwriter/structureParser.ts`](./lib/ghostwriter/structureParser.ts) and verify that:
+   - Headings are parsed into structured `headings` with levels (`level: 1 | 2 | 3`).
+   - Sections are delineated by header boundaries with start/end lines and word counts.
+   - Content types extract their specific fields from Markdown headers (`# Subject: ...`, `## Email Body`, `## Post`, `## Hashtags`, `# <Title>`).
 
 ---
 
@@ -540,7 +560,7 @@ Use the **Test Data** pills `#1`, `#2`, and `#3` to review generated drafts acro
 | **Mandatory** | Meaningful error messages | ✅ Complete | Friendly error card with recovery buttons |
 | **Mandatory** | Required structural elements | ✅ Complete | Subject/Body, Post/Tags, Title/Story |
 | **Mandatory** | Incomplete response handling | ✅ Complete | Finish reason + Zod schema validation |
-| **Mandatory** | Content structure parsing | ✅ Complete | Robust JSON & section parser |
+| **Mandatory** | Content structure parsing | ✅ Complete | Markdown header & section boundary parser with JSON fallback |
 | **Mandatory** | Removal of AI artifacts | ✅ Complete | Sanitizer strips preambles & fences |
 | **Mandatory** | $\pm 10\%$ Word count validation | ✅ Complete | See [`lib/ghostwriter/qualityValidation.ts`](./lib/ghostwriter/qualityValidation.ts) |
 | **Mandatory** | Formatting & spacing sanitization | ✅ Complete | Standardizes newlines and spaces |

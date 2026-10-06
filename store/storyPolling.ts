@@ -1,5 +1,6 @@
 import { GenerateRequest } from "@/schema/contentTypeSchema"
 import { StoryOutput } from "@/schema/generatedContentSchema"
+import { StoryConfigSchema } from "@/schema/storyConfigSchema"
 import axios from "axios"
 import { create } from "zustand"
 
@@ -11,6 +12,7 @@ type JobStatus =
     | "completed"
 
 interface StoryPollingStore {
+    formData: StoryConfigSchema | null
     request: GenerateRequest | null
     jobId: string | null
     status: JobStatus
@@ -18,6 +20,7 @@ interface StoryPollingStore {
     result: StoryOutput | null
     error: string | null
 
+    setFormData: (formData: StoryConfigSchema | null) => void
     setRequest: (request: GenerateRequest) => void
     startJob: (jobId: string) => void
     setAttempt: (attempt: 0 | 1) => void
@@ -30,6 +33,7 @@ interface StoryPollingStore {
 let currentStoryPollId = 0
 
 export const useStoryPollingStore = create<StoryPollingStore>((set) => ({
+    formData: null,
     request: null,
     jobId: null,
     status: "idle",
@@ -37,9 +41,16 @@ export const useStoryPollingStore = create<StoryPollingStore>((set) => ({
     result: null,
     error: null,
 
+    setFormData: (formData) =>
+        set({
+            formData
+        }),
+
     setRequest: (request) =>
         set({
             request,
+            result: null,
+            error: null,
             status: "submitting"
         }),
 
@@ -75,6 +86,7 @@ export const useStoryPollingStore = create<StoryPollingStore>((set) => ({
     reset: () => {
         currentStoryPollId++
         set({
+            formData: null,
             request: null,
             jobId: null,
             status: "idle",

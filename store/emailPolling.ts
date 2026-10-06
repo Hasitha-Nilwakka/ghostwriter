@@ -1,5 +1,6 @@
 import { GenerateRequest } from "@/schema/contentTypeSchema"
 import { EmailOutput } from "@/schema/generatedContentSchema"
+import { EmailConfigSchema } from "@/schema/emailConfigSchema"
 import axios from "axios"
 import { create } from "zustand"
 
@@ -11,6 +12,7 @@ type JobStatus =
     | "completed"
 
 interface EmailPollingStore {
+    formData: EmailConfigSchema | null
     request: GenerateRequest | null
     jobId: string | null
     status: JobStatus
@@ -18,6 +20,7 @@ interface EmailPollingStore {
     result: EmailOutput | null
     error: string | null
 
+    setFormData: (formData: EmailConfigSchema | null) => void
     setRequest: (request: GenerateRequest) => void
     startJob: (jobId: string) => void
     setAttempt: (attempt: 0 | 1) => void
@@ -30,6 +33,7 @@ interface EmailPollingStore {
 let currentEmailPollId = 0
 
 export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
+    formData: null,
     request: null,
     jobId: null,
     status: "idle",
@@ -37,9 +41,16 @@ export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
     result: null,
     error: null,
 
+    setFormData: (formData) =>
+        set({
+            formData
+        }),
+
     setRequest: (request) =>
         set({
             request,
+            result: null,
+            error: null,
             status: "submitting"
         }),
 
@@ -75,6 +86,7 @@ export const useEmailPollingStore = create<EmailPollingStore>((set) => ({
     reset: () => {
         currentEmailPollId++
         set({
+            formData: null,
             request: null,
             jobId: null,
             status: "idle",

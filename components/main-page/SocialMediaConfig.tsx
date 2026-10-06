@@ -42,35 +42,46 @@ import { useGenerateSocial } from "@/queries/generateSocialMediaRequest";
 import AlertFlow from "../ui/alertFlow";
 import { LuGhost } from "react-icons/lu";
 import { currentStep, useCurrentStepStore } from "@/store/currentStep";
+import { useSocialMediaPollingStore } from "@/store/socialMediaPolling";
 import { useEffect } from "react";
 import FillMockDataButton from "./FillMockDataButton";
 import { socialMediaMockPresets } from "@/data/mockFormData";
 
 export default function SocialMediaConfig() {
     const { setCurrentStep } = useCurrentStepStore();
+    const { formData, setFormData } = useSocialMediaPollingStore();
     const { mutate, isPending, isSuccess, isError } = useGenerateSocial();
+
+    const initialValues: SocialMediaConfigSchema = formData ?? {
+        product_service: "",
+        platform: "X",
+        goal: "",
+        tone: [],
+        cta: ""
+    };
 
     const {
         handleSubmit,
-        register,
         control,
         reset,
+        getValues,
         formState: { errors }
     } = useForm<SocialMediaConfigSchema>({
         resolver: zodResolver(socialMediaConfigSchema),
-        defaultValues: {
-            product_service: "",
-            platform: "X",
-            goal: "",
-            tone: [],
-            cta: ""
-        },
+        defaultValues: initialValues,
         mode: "onTouched"
     });
+
+    useEffect(() => {
+        if (formData) {
+            reset(formData);
+        }
+    }, [formData, reset]);
 
     const alertStatus = isPending ? "pending" : isSuccess ? "success" : isError ? "failed" : "idle";
 
     function submitForm(data: SocialMediaConfigSchema) {
+        setFormData(data);
         mutate(data);
     }
 
@@ -133,7 +144,10 @@ export default function SocialMediaConfig() {
 
                 <FillMockDataButton
                     presets={socialMediaMockPresets}
-                    onSelectPreset={(data) => reset(data)}
+                    onSelectPreset={(data) => {
+                        setFormData(data);
+                        reset(data);
+                    }}
                     className="self-end sm:self-center"
                 />
             </div>
@@ -153,11 +167,17 @@ export default function SocialMediaConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <TextareaWithCharacterCount
-                                    {...register("product_service")}
-                                    placeHolder="e.g. 50% discount on summer apparel, free shipping included"
-                                    description="What product, service, or event are you promoting?"
-                                    maxLength={300}
+                                <Controller
+                                    name="product_service"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <TextareaWithCharacterCount
+                                            {...field}
+                                            placeHolder="e.g. 50% discount on summer apparel, free shipping included"
+                                            description="What product, service, or event are you promoting?"
+                                            maxLength={300}
+                                        />
+                                    )}
                                 />
 
                                 {errors.product_service && (
@@ -210,11 +230,17 @@ export default function SocialMediaConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <TextareaWithCharacterCount
-                                    {...register("goal")}
-                                    placeHolder="e.g. Drive website visits, generate product inquiries, or build brand awareness"
-                                    description="What is the primary objective of this post?"
-                                    maxLength={300}
+                                <Controller
+                                    name="goal"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <TextareaWithCharacterCount
+                                            {...field}
+                                            placeHolder="e.g. Drive website visits, generate product inquiries, or build brand awareness"
+                                            description="What is the primary objective of this post?"
+                                            maxLength={300}
+                                        />
+                                    )}
                                 />
 
                                 {errors.goal && (
@@ -266,10 +292,16 @@ export default function SocialMediaConfig() {
                                     </FieldLabel>
                                 </div>
 
-                                <InputCharacterLimit
-                                    {...register("cta")}
-                                    placeholder="e.g. Tap the link in bio to shop now, or drop a comment below"
-                                    maxLength={300}
+                                <Controller
+                                    name="cta"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <InputCharacterLimit
+                                            {...field}
+                                            placeholder="e.g. Tap the link in bio to shop now, or drop a comment below"
+                                            maxLength={300}
+                                        />
+                                    )}
                                 />
 
                                 <FieldDescription>
@@ -291,7 +323,10 @@ export default function SocialMediaConfig() {
                         type="button"
                         variant="outline"
                         className="w-auto! shrink-0 flex items-center gap-2 cursor-pointer h-10 px-4 text-sm font-medium transition-colors duration-200"
-                        onClick={() => setCurrentStep(currentStep.step1)}
+                        onClick={() => {
+                            setFormData(getValues());
+                            setCurrentStep(currentStep.step1);
+                        }}
                         disabled={isPending || isSuccess}
                     >
                         <MdArrowBack size={18} />

@@ -5,10 +5,11 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 
 export const useGenerateStory = () => {
-    const { setRequest, startJob } = useStoryPollingStore()
+    const { setRequest, startJob, setFormData } = useStoryPollingStore()
 
     return useMutation({
         mutationFn: async (data: StoryConfigSchema) => {
+            setFormData(data)
             const requestData: GenerateRequest = {
                 content_type: "story",
                 parameters: {

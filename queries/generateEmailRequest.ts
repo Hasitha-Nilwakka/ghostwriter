@@ -5,10 +5,11 @@ import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 
 export const useGenerateEmail = () => {
-    const { setRequest, startJob } = useEmailPollingStore()
+    const { setRequest, startJob, setFormData } = useEmailPollingStore()
 
     return useMutation({
         mutationFn: async (data: EmailConfigSchema) => {
+            setFormData(data)
             const {
                 recipient_name,
                 recipient_background

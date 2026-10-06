@@ -12,13 +12,16 @@ export function buildEmailPrompt(
   const systemPrompt = [
     "You are Ghostwriter, an executive communications and professional email drafting assistant.",
     "Your objective is to produce high-impact, context-aware emails with professional structure and clarity.",
-    "Return ONLY strict valid JSON with the exact keys: 'subject' and 'body'. No markdown fences, no surrounding commentary.",
+    "Format your response with clear Markdown headers to define section boundaries:",
+    "- Use a top-level H1 header '# Subject: <Subject Line>' for the email subject line.",
+    "- Use a second-level H2 header '## Email Body' for the main email body copy.",
     "Rules:",
     "- Cover every single provided key point accurately without omitting any.",
     "- Reflect the specified tone and urgency level naturally in the writing style.",
     "- Seamlessly incorporate the Call-to-Action (CTA).",
     "- Never invent facts, contact details, links, or sender identities not provided in the input.",
     "- Do not include placeholders like '[Your Name]' or '[Signature]'.",
+    "- Do not output conversational preambles or commentary outside the markdown sections.",
   ].join(" ");
 
   const userPrompt = [
@@ -31,11 +34,11 @@ export function buildEmailPrompt(
     `- Key Points to Include:`,
     ...key_points.map((p, i) => `  ${i + 1}. ${p}`),
     ``,
-    `Expected Output JSON Structure:`,
-    `{`,
-    `  "subject": "<Concise, engaging subject line>",`,
-    `  "body": "<Well-formatted email body with paragraphs>"`,
-    `}`,
+    `Format your response with clear markdown headers:`,
+    `# Subject: <Concise, engaging subject line>`,
+    ``,
+    `## Email Body`,
+    `<Well-formatted email body with paragraphs>`,
   ].join("\n");
 
   return { systemPrompt, userPrompt };
@@ -50,15 +53,18 @@ export function buildSocialMediaPrompt(
   const systemPrompt = [
     "You are Ghostwriter, a viral social media strategist and content creator.",
     `Your objective is to produce platform-native, highly engaging social posts tailored specifically for ${platform}.`,
-    "Return ONLY strict valid JSON with the exact keys: 'post_body' and 'hashtags' (array of strings). No markdown fences, no surrounding commentary.",
+    "Format your response with clear Markdown headers to define section boundaries:",
+    "- Use a second-level H2 header '## Post' for the main post content.",
+    "- Use a second-level H2 header '## Hashtags' for the hashtags list.",
     "Rules:",
     `- Follow formatting, hook style, and spacing conventions of ${platform}.`,
-    "- Return hashtags ONLY in the 'hashtags' array. Never embed hashtags inside 'post_body'.",
+    "- Place all hashtags strictly under the '## Hashtags' section header; never embed hashtags inside the post body.",
     isX
-      ? "- STRICT CONSTRAINT FOR X: The combined character count of post_body and all space-separated hashtags MUST NOT exceed 280 characters."
+      ? "- STRICT CONSTRAINT FOR X: The combined character count of the post body and all space-separated hashtags MUST NOT exceed 280 characters."
       : "",
     "- Naturally integrate the Goal and Call-to-Action (CTA).",
     "- Use only facts and details provided; do not invent fake claims, stats, or features.",
+    "- Do not output conversational preambles or commentary outside the markdown sections.",
   ]
     .filter(Boolean)
     .join(" ");
@@ -71,11 +77,12 @@ export function buildSocialMediaPrompt(
     `- Call to Action: ${cta}`,
     isX ? `- Hard Limit: Must stay within 280 characters combined.` : "",
     ``,
-    `Expected Output JSON Structure:`,
-    `{`,
-    `  "post_body": "<Hook and engaging body copy without hashtags>",`,
-    `  "hashtags": ["#tag1", "#tag2", "#tag3"]`,
-    `}`,
+    `Format your response with clear markdown headers:`,
+    `## Post`,
+    `<Hook and engaging body copy without hashtags>`,
+    ``,
+    `## Hashtags`,
+    `#tag1 #tag2 #tag3`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -105,13 +112,16 @@ export function buildStoryPrompt(
   const systemPrompt = [
     "You are Ghostwriter, an acclaimed fiction author and narrative architect.",
     "Your objective is to craft complete, immersive short stories with compelling exposition, rising action, climax, and satisfying resolution.",
-    "Return ONLY strict valid JSON with the exact keys: 'title' and 'story'. No markdown fences, no surrounding commentary.",
+    "Format your response with clear Markdown headers to define titles and narrative section boundaries:",
+    "- Use a top-level H1 header '# <Title>' for the story title.",
+    "- Use second-level H2 headers '## <Section Name>' (such as '## Introduction', '## Rising Action', '## Climax', '## Resolution') to define narrative section boundaries.",
     "Rules:",
     `- Target length: Approximately ${length_words} words. The story MUST fall strictly within the ${minWords} to ${maxWords} word range (±10%).`,
     "- Actively include and meaningfully feature EVERY listed character by their exact name.",
     "- Ground the scene deeply in the specified setting.",
     "- Adhere closely to the requested genre, style, target audience, and mood.",
     "- Do not end abruptly; complete the narrative arc fully.",
+    "- Do not output conversational preambles or commentary outside the markdown sections.",
   ].join(" ");
 
   const userPrompt = [
@@ -125,11 +135,17 @@ export function buildStoryPrompt(
     `- Characters to Feature:`,
     ...characterDescriptions,
     ``,
-    `Expected Output JSON Structure:`,
-    `{`,
-    `  "title": "<Evocative, genre-appropriate title>",`,
-    `  "story": "<Complete short story prose with natural paragraph breaks>"`,
-    `}`,
+    `Format your response with clear markdown headers:`,
+    `# <Evocative, genre-appropriate title>`,
+    ``,
+    `## Introduction`,
+    `<Opening narrative scene establishing setting and characters...>`,
+    ``,
+    `## Narrative Development`,
+    `<Rising action, scene progression, and character interaction...>`,
+    ``,
+    `## Climax & Resolution`,
+    `<Dramatic turning point and complete resolution...>`,
   ].join("\n");
 
   return { systemPrompt, userPrompt };
@@ -196,7 +212,7 @@ export function buildRunpodRetryInput(
   const corrections = [
     "The previous generation failed automated quality validation.",
     "Generate a completely new response.",
-    "Return only strict valid JSON using the required output keys.",
+    "Format your response with clear Markdown headers (# for title/subject and ## for section headings).",
   ];
 
   if (
@@ -244,7 +260,7 @@ export function buildRunpodRetryInput(
     issueCodes.has("HASHTAG_IN_POST_BODY")
   ) {
     corrections.push(
-      "CRITICAL: Remove every hashtag from post_body and place hashtags strictly in the hashtags array.",
+      "CRITICAL: Remove every hashtag from post_body and place hashtags strictly under the '## Hashtags' header.",
     );
   }
 

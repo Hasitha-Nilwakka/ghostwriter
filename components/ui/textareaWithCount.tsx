@@ -20,16 +20,20 @@ const TextareaWithCharacterCount = ({
   className,
   ...props
 }: Props) => {
-  const [internalCount, setInternalCount] = useState<number>(() => {
-    if (typeof value === "string") return value.length;
+  const [uncontrolledLength, setUncontrolledLength] = useState<number>(() => {
     if (typeof defaultValue === "string") return defaultValue.length;
     return 0;
   });
 
-  const textLength = typeof value === "string" ? value.length : internalCount;
+  const textLength =
+    typeof value === "string"
+      ? value.length
+      : uncontrolledLength;
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInternalCount(e.target.value.length);
+    if (typeof value !== "string") {
+      setUncontrolledLength(e.target.value.length);
+    }
     onChange?.(e);
   };
 
